@@ -6,8 +6,8 @@ class Scene:
 
     def __init__(self):
         # init all arms and keyboard here
-        self.camPos = np.array([0, 2, 0], dtype=np.float32)
-        self.camTheta = 0
+        self.camPos = np.array([0, -2, 0], dtype=np.float32)
+        self.camTheta = 90
         self.camPhi = 0
         self.updateCameraVectors()
 
@@ -47,7 +47,7 @@ class Scene:
         # TODO: update arm and finger rotations/positions
         # settings.arm1.finger1.update(rate)
         # settings.arm1.finger2.update(rate)
-        # settings.arm1.spin(rate)
+        settings.arm1.spin(rate)
         pass
 
     def render(self):

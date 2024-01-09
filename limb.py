@@ -11,6 +11,7 @@ from OpenGL.GLUT import *  # noqa: F403
 
 class Limb():
     def __init__(self, l, w, h):
+        #                         x, y, z
         self.position = np.array([0, 0, 0], dtype=np.float32)
         self.eulers = np.array([0, 0, 0], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_from_eulers(
@@ -119,10 +120,10 @@ class Limb():
         """
         # TODO: update rotation from settings
 
-        self.eulers[2] += 0.2 * rate
+        self.eulers[0] += 0.2 * rate
 
-        if self.eulers[2] > 360:
-            self.eulers[2] -= 360
+        if self.eulers[0] > 360:
+            self.eulers[0] -= 360
 
         self.updateRotation(pyrr.matrix44.create_from_eulers(
             eulers=np.radians(self.eulers),
@@ -149,7 +150,10 @@ class Limb():
         """
 
         model_transform = pyrr.matrix44.create_identity(dtype=np.float32)
-
+        model_transform = pyrr.matrix44.multiply(
+            m1=model_transform,
+            m2=pyrr.matrix44.create_from_eulers(eulers=np.radians(self.eulers), dtype=np.float32)
+        )
         return pyrr.matrix44.multiply(
             m1=model_transform,
             m2=pyrr.matrix44.create_from_translation(

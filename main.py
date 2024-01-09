@@ -47,7 +47,7 @@ class GloveGL:
             glfw.poll_events()
 
             # 1 frame every 16.7ms -> 60fps
-            # self.mainScene.update(self.frameTime/16.7)
+            self.mainScene.update(self.frameTime/16.7)
             self.mainScene.render()
 
             # glFlush()
