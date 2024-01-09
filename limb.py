@@ -12,7 +12,7 @@ from OpenGL.GLUT import *  # noqa: F403
 class Limb():
     def __init__(self, l, w, h):
         #                         x, y, z
-        self.position = np.array([0, 0, 0], dtype=np.float32)
+        self.position = np.array([0, 4, 0], dtype=np.float32)
         self.eulers = np.array([0, 0, 0], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_from_eulers(
             eulers=np.radians(self.eulers),
@@ -120,6 +120,11 @@ class Limb():
         """
         # TODO: update rotation from settings
 
+        self.eulers[2] += 0.2 * rate
+
+        if self.eulers[2] > 360:
+            self.eulers[2] -= 360
+
         self.eulers[0] += 0.2 * rate
 
         if self.eulers[0] > 360:
@@ -135,13 +140,15 @@ class Limb():
 
     def updatePosition(self, pos):
         self.position = pos
-        # self.tipPosition = self.calculateTip()
+        self.tipPosition = self.calculateTip()
 
     def calculateTip(self):
         # TODO: calculate tip position
-        tip = np.dot(self.rotation, np.array([0, 0, 1, 0], dtype=np.float32)) * self.h
-        print(tip)
-        pass
+        # print(self.rotation)
+
+        self.tipPosition = np.dot(np.array([0, 0, 1, 0], dtype=np.float32), self.rotation) * self.h
+
+        # print(tip)
 
     def get_model_transform(self) -> np.ndarray:
         """
@@ -150,10 +157,12 @@ class Limb():
         """
 
         model_transform = pyrr.matrix44.create_identity(dtype=np.float32)
+
         model_transform = pyrr.matrix44.multiply(
             m1=model_transform,
-            m2=pyrr.matrix44.create_from_eulers(eulers=np.radians(self.eulers), dtype=np.float32)
+            m2=self.rotation
         )
+
         return pyrr.matrix44.multiply(
             m1=model_transform,
             m2=pyrr.matrix44.create_from_translation(
