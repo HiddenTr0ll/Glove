@@ -1,34 +1,41 @@
 import numpy as np
 import settings
-
 from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
 from limb import Limb
+import pyrr
 
 
 class Arm():
     def __init__(self):
-        self.limbs = [Limb(l=2, w=1, h=3) for _ in range(1)]
+        self.needsUpdate = True
         self.indexShift = [0, 6, 1, 2, 3, 4, 5]
+        self.limbs = [Limb(index=self.indexShift[i], l=1, w=1, h=3) for i in range(7)]
+        for f in self.limbs:
+            print(f.index)
+
         self.rotationList = settings.rotationList
-        # self.finger2 = Limb(l=1, w=1, h=2)
-        # self.update()
-        # for i in range(1):
-        #   self.limbs[i].updatePosition(np.array([2, 0, 0], dtype=np.float32))
+        self.update()
 
     def spin(self, rate):
         for limb in self.limbs:
             limb.update(rate)
+        self.needsUpdate = True
+        self.update()
 
     def update(self):
-        if self.rotation != settings.rotation:
-            self.rotation = settings.rotation
+        # zip: convert list to tubles of 2 arrays
+        # allclose: compare if 2 arrays are euqual element wise with tolerance
+        # all: OR combination of all truth values
+        if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]) | self.needsUpdate:
+            self.rotationList = settings.rotationList
             self.updateAngles()
             self.updatePositions()
+            # self.needsUpdate = False
 
     def updateAngles(self):
         for index, limb in enumerate(self.limbs):
-            limb.updateRotation(self.rotation[self.indexShift[index]])
+            limb.updateRotation(self.rotationList[self.indexShift[index]])
 
     def updatePositions(self):
         self.limbs[0].calculateTip()

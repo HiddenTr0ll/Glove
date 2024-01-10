@@ -10,9 +10,10 @@ from OpenGL.GLUT import *  # noqa: F403
 
 
 class Limb():
-    def __init__(self, l, w, h):
+    def __init__(self, index, l, w, h):
+        self.index = index
         #                         x, y, z
-        self.position = np.array([0, 4, 0], dtype=np.float32)
+        self.position = np.array([index*2, 4, 0], dtype=np.float32)
         self.eulers = np.array([0, 0, 0], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_from_eulers(
             eulers=np.radians(self.eulers),
@@ -140,13 +141,14 @@ class Limb():
 
     def updatePosition(self, pos):
         self.position = pos
-        self.tipPosition = self.calculateTip()
+        self.calculateTip()
 
     def calculateTip(self):
         # TODO: calculate tip position
         # print(self.rotation)
+        delta = np.dot(np.array([0, 0, 1, 0], dtype=np.float32), self.rotation) * self.h
 
-        self.tipPosition = np.dot(np.array([0, 0, 1, 0], dtype=np.float32), self.rotation) * self.h
+        self.tipPosition = self.position + delta[:3]
 
         # print(tip)
 

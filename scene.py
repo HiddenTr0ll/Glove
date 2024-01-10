@@ -47,7 +47,7 @@ class Scene:
         # TODO: update arm and finger rotations/positions
         # settings.arm1.finger1.update(rate)
         # settings.arm1.finger2.update(rate)
-        settings.arm1.spin(rate)
+        # settings.arm1.spin(rate)
         pass
 
     def render(self):

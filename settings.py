@@ -28,7 +28,7 @@ RETURN_ACTION_END = 1
 
 def init():
     global rotationList
-    rotationList = [None for _ in range(7)]
+    rotationList = [pyrr.matrix44.create_identity() for _ in range(7)]
 
     global window
     window = initGLFW()
@@ -49,12 +49,13 @@ def init():
         fovy=45,
         aspect=SCREEN_WIDTH/SCREEN_HEIGHT,
         near=0.1,
-        far=10,
+        far=20,
         dtype=np.float32)
     glUniformMatrix4fv(
         glGetUniformLocation(shader, "projection"),
         1, GL_FALSE, projectionTransform
     )
+
     global modelMatrixLocation
     modelMatrixLocation = glGetUniformLocation(shader, "model")
     global viewMatrixLocation
