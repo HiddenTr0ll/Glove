@@ -11,8 +11,6 @@ from OpenGL.GLUT import *  # noqa: F403
 
 class Cuboid():
     def __init__(self):
-        #                         x, y, z
-        self.position = np.array([0, 0, 0], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_identity()
         self.genVertices(self.l, self.w, self.h)
         self.createBuffers()

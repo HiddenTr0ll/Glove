@@ -11,7 +11,6 @@ class GloveGL:
         # glove_thread.start()
 
         settings.init()
-        self.arm1 = settings.arm1
         self.mainScene = Scene()
 
         self.lastTime = glfw.get_time()
@@ -111,7 +110,7 @@ class GloveGL:
         self.numFrames += 1
 
     def quit(self):
-        glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
+        self.mainScene.quit()
         glDeleteProgram(settings.shader)
         settings.texture.destroy()
         glfw.destroy_window(settings.window)

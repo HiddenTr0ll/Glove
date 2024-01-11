@@ -6,9 +6,11 @@ from key import *
 import pyrr
 
 
-class keyboard():
+class Keyboard():
     def __init__(self):
-        self.keys = [Key("white") for i in range(7)]
+        #                         x, y, z
+        self.position = np.array([0, 20, 0], dtype=np.float32)
+        self.keys = [Key(np.array([i*2, 0, 0], dtype=np.float32), "white") for i in range(7)]
 
     def spin(self, rate):
         for limb in self.limbs:

@@ -3,7 +3,8 @@ from cuboid import *
 
 class Limb(Cuboid):
     def __init__(self, l, w, h):
-
+        #                         x, y, z
+        self.position = np.array([0, 0, 0], dtype=np.float32)
         self.l = l
         self.w = w
         self.h = h

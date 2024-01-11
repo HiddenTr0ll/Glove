@@ -13,10 +13,10 @@ import datetime
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 import threading
-from arm import Arm
+
+from scene import Scene
 from material import Material
 import pyrr
-from scene import Scene
 
 
 SCREEN_WIDTH = 900
@@ -42,8 +42,7 @@ def init():
     shader = create_shader_program("shaders/vertex.txt", "shaders/fragment.txt")
     glUseProgram(shader)
     glUniform1i(glGetUniformLocation(shader, "imageTexture"), 0)
-    global arm1
-    arm1 = Arm()
+
     glEnable(GL_DEPTH_TEST)
 
     projectionTransform = pyrr.matrix44.create_perspective_projection(

@@ -1,5 +1,8 @@
-import settings
 from settings import *
+import settings
+from arm import Arm
+from keyboard import Keyboard
+import pyrr
 
 
 class Scene:
@@ -10,6 +13,8 @@ class Scene:
         self.camTheta = 90
         self.camPhi = 0
         self.updateCameraVectors()
+        self.arm1 = Arm()
+        self.keyboard = Keyboard()
 
     def moveCamera(self, dPos):
         dPos = np.array(dPos, dtype=np.float32)
@@ -48,7 +53,7 @@ class Scene:
         # settings.arm1.finger1.update(rate)
         # settings.arm1.finger2.update(rate)
         # settings.arm1.spin(rate)
-        settings.arm1.update()
+        self.arm1.update()
         pass
 
     def render(self):
@@ -63,5 +68,10 @@ class Scene:
         )
         glUniformMatrix4fv(settings.viewMatrixLocation, 1, GL_FALSE, viewTransform)
 
-        settings.arm1.draw()
+        self.arm1.draw()
+        self.keyboard.draw()
         glFlush()
+
+    def quit(self):
+        glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
+        glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])
