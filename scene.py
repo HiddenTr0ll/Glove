@@ -74,4 +74,4 @@ class Scene:
 
     def quit(self):
         glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
-        glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])
+        glDeleteVertexArrays(len(self.keyboard.whiteKeys), [o.vao for o in self.keyboard.whiteKeys])
