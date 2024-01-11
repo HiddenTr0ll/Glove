@@ -2,7 +2,7 @@ import numpy as np
 import settings
 from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
-from limb import Limb
+from limb import *
 import pyrr
 
 
@@ -22,8 +22,6 @@ class Arm():
             -4.0, -2.8, -0.5, 1.4, 3.1,   # x-offset fingers
             -7.5, 0.0, 0.0, 0.0, 0.0       # y-offset thumb
         )
-        self.needsUpdate = True
-        self.indexShift = [0, 6, 1, 2, 3, 4, 5]
         self.limbs = [Limb(
             l=self.measurements[i*3],
             w=self.measurements[i*3+1],
@@ -43,7 +41,7 @@ class Arm():
         # zip: convert list to tubles of 2 arrays
         # allclose: compare if 2 arrays are euqual element wise with tolerance
         # all: OR combination of all truth values
-       # if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]):
+        # if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]):
         self.rotationList = settings.rotationList
         self.updateAngles()
         self.updatePositions()

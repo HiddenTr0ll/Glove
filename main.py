@@ -7,8 +7,8 @@ class GloveGL:
 
     def __init__(self):
 
-        glove_thread = threading.Thread(target=gloveLoop)
-        glove_thread.start()
+        # glove_thread = threading.Thread(target=gloveLoop)
+        # glove_thread.start()
 
         settings.init()
         self.arm1 = settings.arm1
@@ -44,7 +44,7 @@ class GloveGL:
                 break
 
             self.handleKeys()
-            # self.handleMouse()
+            self.handleMouse()
             glfw.poll_events()
 
             # 1 frame every 16.7ms -> 60fps
@@ -71,8 +71,8 @@ class GloveGL:
         if combo in self.moveLookup:
             directionModifier = self.moveLookup[combo]
             dPos = [
-                0.5*self.frameTime / 16.7 * np.cos(np.deg2rad(self.mainScene.camTheta+directionModifier)),
-                0.5*self.frameTime / 16.7 * np.sin(np.deg2rad(self.mainScene.camTheta+directionModifier)),
+                self.frameTime / 16.7 * np.cos(np.deg2rad(self.mainScene.camTheta+directionModifier)),
+                self.frameTime / 16.7 * np.sin(np.deg2rad(self.mainScene.camTheta+directionModifier)),
                 0
             ]
             self.mainScene.moveCamera(dPos)
@@ -80,14 +80,14 @@ class GloveGL:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * 0.5
+                self.frameTime/16.7 * 0.7
             ]
             self.mainScene.moveCamera(dPos)
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_Q) == GLFW_CONSTANTS.GLFW_PRESS:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * -0.5
+                self.frameTime/16.7 * -0.7
             ]
             self.mainScene.moveCamera(dPos)
 
