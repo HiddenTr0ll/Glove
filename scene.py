@@ -48,6 +48,7 @@ class Scene:
         # settings.arm1.finger1.update(rate)
         # settings.arm1.finger2.update(rate)
         # settings.arm1.spin(rate)
+        settings.arm1.update()
         pass
 
     def render(self):

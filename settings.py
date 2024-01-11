@@ -18,9 +18,10 @@ from material import Material
 import pyrr
 from scene import Scene
 
+
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 900
-SER_PORT = "COM10"
+SER_PORT = "COM3"
 TARGET_FPS = 60
 RETURN_ACTION_CONTINUE = 0
 RETURN_ACTION_END = 1

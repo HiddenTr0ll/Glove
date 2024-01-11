@@ -1,13 +1,14 @@
 from settings import *
 import settings
+from read_glove import gloveLoop
 
 
 class GloveGL:
 
     def __init__(self):
 
-        # glove_thread = threading.Thread(target=gloveLoop)
-        # glove_thread.start()
+        glove_thread = threading.Thread(target=gloveLoop)
+        glove_thread.start()
 
         settings.init()
         self.arm1 = settings.arm1

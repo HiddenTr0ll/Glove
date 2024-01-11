@@ -43,15 +43,14 @@ class Arm():
         # zip: convert list to tubles of 2 arrays
         # allclose: compare if 2 arrays are euqual element wise with tolerance
         # all: OR combination of all truth values
-        if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]) | self.needsUpdate:
-            self.rotationList = settings.rotationList
-            self.updateAngles()
-            self.updatePositions()
-            # self.needsUpdate = False
+       # if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]):
+        self.rotationList = settings.rotationList
+        self.updateAngles()
+        self.updatePositions()
 
     def updateAngles(self):
         for index, limb in enumerate(self.limbs):
-            limb.updateRotation(self.rotationList[self.indexShift[index]])
+            limb.updateRotation(self.rotationList[index])
 
     def updatePositions(self):
         self.limbs[0].calculateTip()
