@@ -24,7 +24,7 @@ class Keyboard():
         self.update()
 
     def draw(self):
-        settings.texture.use()
+        settings.whiteT.use()
         for key in self.whiteKeys:
             glBindVertexArray(key.vao)
             glUniformMatrix4fv(
@@ -32,6 +32,7 @@ class Keyboard():
                 key.get_model_transform())
             glDrawArrays(GL_TRIANGLES, 0, key.vertexCount)
 
+        settings.blackT.use()
         for key in self.blackKeys:
             glBindVertexArray(key.vao)
             glUniformMatrix4fv(

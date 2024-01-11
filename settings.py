@@ -36,6 +36,13 @@ def init():
 
     global texture
     texture = Material("gfx/wood.png")
+
+    global whiteT
+    whiteT = Material("gfx/white.jpg")
+
+    global blackT
+    blackT = Material("gfx/black.jpg")
+
     glClearColor(0.1, 0.2, 0.4, 1.0)
 
     global shader
