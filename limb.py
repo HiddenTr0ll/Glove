@@ -135,8 +135,8 @@ class Limb():
         # print(tip)
 
     def updatePositionWithOffset(self, tip, rotation, x, z):
-        delta = np.dot(np.array([x, 0, z, 0], dtype=np.float32), rotation)
-        self.position = tip+delta[:3]
+        delta = np.dot(np.array([x, 0, z], dtype=np.float32), rotation[:3, :3])
+        self.position = tip+delta
         pass
 
     def get_model_transform(self) -> np.ndarray:
