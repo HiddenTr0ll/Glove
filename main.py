@@ -70,8 +70,8 @@ class GloveGL:
         if combo in self.moveLookup:
             directionModifier = self.moveLookup[combo]
             dPos = [
-                0.1*self.frameTime / 16.7 * np.cos(np.deg2rad(self.mainScene.camTheta+directionModifier)),
-                0.1*self.frameTime / 16.7 * np.sin(np.deg2rad(self.mainScene.camTheta+directionModifier)),
+                0.5*self.frameTime / 16.7 * np.cos(np.deg2rad(self.mainScene.camTheta+directionModifier)),
+                0.5*self.frameTime / 16.7 * np.sin(np.deg2rad(self.mainScene.camTheta+directionModifier)),
                 0
             ]
             self.mainScene.moveCamera(dPos)
@@ -79,14 +79,14 @@ class GloveGL:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * 0.1
+                self.frameTime/16.7 * 0.5
             ]
             self.mainScene.moveCamera(dPos)
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_Q) == GLFW_CONSTANTS.GLFW_PRESS:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * -0.1
+                self.frameTime/16.7 * -0.5
             ]
             self.mainScene.moveCamera(dPos)
 

@@ -49,7 +49,7 @@ def init():
         fovy=45,
         aspect=SCREEN_WIDTH/SCREEN_HEIGHT,
         near=0.1,
-        far=20,
+        far=200,
         dtype=np.float32)
     glUniformMatrix4fv(
         glGetUniformLocation(shader, "projection"),

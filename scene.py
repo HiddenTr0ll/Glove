@@ -6,7 +6,7 @@ class Scene:
 
     def __init__(self):
         # init all arms and keyboard here
-        self.camPos = np.array([0, -2, 0], dtype=np.float32)
+        self.camPos = np.array([0, -100, 20], dtype=np.float32)
         self.camTheta = 90
         self.camPhi = 0
         self.updateCameraVectors()
