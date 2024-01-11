@@ -56,6 +56,7 @@ class Arm():
     def updatePositions(self):
         self.limbs[0].calculateTip()
         self.limbs[6].updatePosition(self.limbs[0].tipPosition)
+        self.limbs[6].calculateTip()
         for i in range(1, 6):
             self.limbs[i].updatePositionWithOffset(
                 self.limbs[6].tipPosition,

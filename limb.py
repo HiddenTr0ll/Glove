@@ -121,23 +121,16 @@ class Limb():
     def updateRotation(self, rotation):
         self.rotation = rotation
 
-    def updatePosition(self, pos):
-        self.position = pos
-        self.calculateTip()
+    def updatePosition(self, position):
+        self.position = position
 
     def calculateTip(self):
-        # TODO: calculate tip position
-        # print(self.rotation)
-        delta = np.dot(np.array([0, 0, 1, 0], dtype=np.float32), self.rotation) * self.h
-
+        delta = np.dot(np.array([0, 0, self.h, 0], dtype=np.float32), self.rotation)
         self.tipPosition = self.position + delta[:3]
 
-        # print(tip)
-
-    def updatePositionWithOffset(self, tip, rotation, x, z):
-        delta = np.dot(np.array([x, 0, z], dtype=np.float32), rotation[:3, :3])
-        self.position = tip+delta
-        pass
+    def updatePositionWithOffset(self, palmTip, palmRotation, offsetX, offsetZ):
+        delta = np.dot(np.array([offsetX, 0, offsetZ], dtype=np.float32), palmRotation[:3, :3])
+        self.position = palmTip + delta
 
     def get_model_transform(self) -> np.ndarray:
         """
