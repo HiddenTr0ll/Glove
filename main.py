@@ -7,8 +7,8 @@ class GloveGL:
 
     def __init__(self):
 
-        # glove_thread = threading.Thread(target=gloveLoop)
-        # glove_thread.start()
+        self.glove_thread = threading.Thread(target=gloveLoop)
+        self.glove_thread.start()
 
         settings.init()
         self.mainScene = Scene()
@@ -50,6 +50,10 @@ class GloveGL:
             self.mainScene.update(self.frameTime/16.7)
             self.mainScene.render()
 
+            # if glfw.get_time() > 5 and glfw.get_time() < 6:
+            #    self.mainScene.keyboard.whiteKeys[10].press()
+            # if glfw.get_time() > 7 and glfw.get_time() < 11:
+            #    self.mainScene.keyboard.whiteKeys[10].release()
             # glFlush()
             # glfw.swap_buffers(settings.window)
 
@@ -110,6 +114,7 @@ class GloveGL:
         self.numFrames += 1
 
     def quit(self):
+        self.glove_thread.run = False
         self.mainScene.quit()
         glDeleteProgram(settings.shader)
         settings.texture.destroy()

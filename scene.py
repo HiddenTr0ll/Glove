@@ -9,9 +9,9 @@ class Scene:
 
     def __init__(self):
         # init all arms and keyboard here
-        self.camPos = np.array([0, -100, 20], dtype=np.float32)
-        self.camTheta = 90
-        self.camPhi = 0
+        self.camPos = np.array([60, 15, 20], dtype=np.float32)
+        self.camTheta = 150
+        self.camPhi = -20
         self.updateCameraVectors()
         self.arm1 = Arm()
         self.keyboard = Keyboard()
@@ -53,6 +53,14 @@ class Scene:
         # settings.arm1.finger1.update(rate)
         # settings.arm1.finger2.update(rate)
         # settings.arm1.spin(rate)
+
+        overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.whiteKeys)
+        for index, key in enumerate(self.keyboard.whiteKeys):
+            if index in overlap:
+                key.press()
+            else:
+                key.release()
+        self.keyboard.update(rate)
         self.arm1.update()
         pass
 
@@ -75,3 +83,4 @@ class Scene:
     def quit(self):
         glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
         glDeleteVertexArrays(len(self.keyboard.whiteKeys), [o.vao for o in self.keyboard.whiteKeys])
+        glDeleteVertexArrays(len(self.keyboard.blackKeys), [o.vao for o in self.keyboard.blackKeys])

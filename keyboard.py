@@ -5,23 +5,26 @@ from OpenGL.GLUT import *  # noqa: F403
 from key import *
 import pyrr
 
+OCTAVES = 3
+
 
 class Keyboard():
     def __init__(self):
         #                         x, y, z
-        self.position = np.array([-50, 50, 0], dtype=np.float32)
-        self.whiteKeys = [Key(self.position+np.array([i*2.2, 0, 0], dtype=np.float32), "white") for i in range(55)]
-        self.blackKeys = []
-        for i in range(55):
+        self.position = np.array([-10, 55, 0], dtype=np.float32)
+        self.whiteKeys: list[Key] = []
+        self.blackKeys: list[Key] = []
+        for i in range(OCTAVES*7):
+            self.whiteKeys.append(Key(self.position+np.array([i*2.2, 0, 0], dtype=np.float32), "white"))
             if (i % 7 == 0) or (i % 7 == 3):
                 continue
             self.blackKeys.append(Key(self.position+np.array([i*2.2 - 1.1, 0, 2], dtype=np.float32), "black"))
 
-    def spin(self, rate):
-        for limb in self.limbs:
-            limb.update(rate)
-        self.needsUpdate = True
-        self.update()
+    def update(self, rate):
+        for key in self.whiteKeys:
+            key.update(rate)
+        for key in self.blackKeys:
+            key.update(rate)
 
     def draw(self):
         settings.whiteT.use()

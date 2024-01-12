@@ -11,60 +11,61 @@ from OpenGL.GLUT import *  # noqa: F403
 
 class Cuboid():
     def __init__(self):
-        self.rotation = pyrr.matrix44.create_identity()
-        self.genVertices(self.l, self.w, self.h)
+
+        self.b = 0.2
+        self.genVertices(self.l, self.w, self.h, self.b)
         self.createBuffers()
 
-    def genVertices(self, l, w, h):
+    def genVertices(self, l, w, h, b):
         # x,y,z , s,t
-        self.vertices = (
-            -l/2, -w/2, 0, 0, 0,
-            l/2, -w/2, 0, 1, 0,
-            l/2,  w/2, 0, 1, 1,
+        self.vertices = (  # -b/w
+            -l/2, -w/2, 0, -b/l, -b/w,
+            l/2, -w/2, 0, 1+b/l, -b/w,
+            l/2,  w/2, 0, 1+b/l, 1+b/w,
 
-            l/2,  w/2, 0, 1, 1,
-            -l/2,  w/2, 0, 0, 1,
-            -l/2, -w/2, 0, 0, 0,
+            l/2,  w/2, 0, 1+b/l, 1+b/w,
+            -l/2,  w/2, 0, -b/l, 1+b/w,
+            -l/2, -w/2, 0, -b/l, -b/w,
 
-            -l/2, -w/2,  h, 0, 0,
-            l/2, -w/2,  h, 1, 0,
-            l/2,  w/2,  h, 1, 1,
+            -l/2, -w/2,  h, -b/l, -b/w,
+            l/2, -w/2,  h, 1+b/l, -b/w,
+            l/2,  w/2,  h, 1+b/l, 1+b/w,
 
-            l/2,  w/2,  h, 1, 1,
-            -l/2,  w/2,  h, 0, 1,
-            -l/2, -w/2,  h, 0, 0,
+            l/2,  w/2,  h, 1+b/l, 1+b/w,
+            -l/2,  w/2,  h, -b/l, 1+b/w,
+            -l/2, -w/2,  h, -b/l, -b/w,
 
-            -l/2,  w/2,  h, 1, 0,
-            -l/2,  w/2, 0, 1, 1,
-            -l/2, -w/2, 0, 0, 1,
+            -l/2,  w/2,  h, 1+b/l, -b/h,
+            -l/2,  w/2, 0, 1+b/l, 1+b/h,
+            -l/2, -w/2, 0, -b/l, 1+b/h,
 
-            -l/2, -w/2, 0, 0, 1,
-            -l/2, -w/2,  h, 0, 0,
-            -l/2,  w/2,  h, 1, 0,
+            -l/2, -w/2, 0, -b/l, 1+b/h,
+            -l/2, -w/2,  h, -b/l, -b/h,
+            -l/2,  w/2,  h, 1+b/l, -b/h,
 
-            l/2,  w/2,  h, 1, 0,
-            l/2,  w/2, 0, 1, 1,
-            l/2, -w/2, 0, 0, 1,
+            l/2,  w/2,  h, 1+b/l, -b/h,
+            l/2,  w/2, 0, 1+b/l, 1+b/h,
+            l/2, -w/2, 0, -b/l, 1+b/h,
 
-            l/2, -w/2, 0, 0, 1,
-            l/2, -w/2,  h, 0, 0,
-            l/2,  w/2,  h, 1, 0,
+            l/2, -w/2, 0, -b/l, 1+b/h,
+            l/2, -w/2,  h, -b/l, -b/h,
+            l/2,  w/2,  h, 1+b/l, -b/h,
 
-            -l/2, -w/2, 0, 0, 1,
-            l/2, -w/2, 0, 1, 1,
-            l/2, -w/2,  h, 1, 0,
+            -l/2, -w/2, 0, -b/l, 1+b/h,
+            l/2, -w/2, 0, 1+b/l, 1+b/h,
+            l/2, -w/2,  h, 1+b/l, -b/h,
 
-            l/2, -w/2,  h, 1, 0,
-            -l/2, -w/2,  h, 0, 0,
-            -l/2, -w/2, 0, 0, 1,
+            l/2, -w/2,  h, 1+b/l, -b/h,
+            -l/2, -w/2,  h, -b/l, -b/h,
+            -l/2, -w/2, 0, -b/l, 1+b/h,
 
-            -l/2,  w/2, 0, 0, 1,
-            l/2,  w/2, 0, 1, 1,
-            l/2,  w/2,  h, 1, 0,
+            -l/2,  w/2, 0, -b/l, 1+b/h,
+            l/2,  w/2, 0, 1+b/l, 1+b/h,
+            l/2,  w/2,  h, 1+b/l, -b/h,
 
-            l/2,  w/2,  h, 1, 0,
-            -l/2,  w/2,  h, 0, 0,
-            -l/2,  w/2, 0, 0, 1
+            l/2,  w/2,  h, 1+b/l, -b/h,
+            -l/2,  w/2,  h, -b/l, -b/h,
+            -l/2,  w/2, 0, -b/l, 1+b/h
         )
         self.verticesArray = np.array(self.vertices, dtype=np.float32)
         self.vertexCount = 36
@@ -84,30 +85,6 @@ class Cuboid():
 
         glEnableVertexAttribArray(1)  # texcoord
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, ctypes.c_void_p(12))
-
-    def overlapsWith(self, other: "Limb"):
-        # x
-        if (self.position[0]-self.l/2) > (other.position[0]+other.l/2):
-            return False
-
-        if (self.position[0]+self.l/2) < (other.position[0]-other.l/2):
-            return False
-
-        # y
-        if (self.position[1]-self.w/2) > (other.position[1]+other.w/2):
-            return False
-
-        if (self.position[1]+self.w/2) < (other.position[1]-other.w/2):
-            return False
-
-        # z
-        if (self.position[2]) > (other.position[2]+other.h):
-            return False
-
-        if (self.position[2]+self.h) < (other.position[2]):
-            return False
-
-        return True
 
     def updateRotation(self, rotation):
         self.rotation = rotation
@@ -134,26 +111,3 @@ class Cuboid():
                 vec=np.array(self.position), dtype=np.float32
             )
         )
-
-    # saved code vor keyboard animation
-
-    """
-    def update(self, rate):
-        
-        # TODO: update rotation from settings
-
-        self.eulers[2] += 0.2 * rate
-
-        if self.eulers[2] > 360:
-            self.eulers[2] -= 360
-
-        self.eulers[0] += 0.2 * rate
-
-        if self.eulers[0] > 360:
-            self.eulers[0] -= 360
-
-        self.updateRotation(pyrr.matrix44.create_from_eulers(
-            eulers=np.radians(self.eulers),
-            dtype=np.float32))
-        self.calculateTip()
-        """

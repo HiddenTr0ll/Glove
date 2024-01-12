@@ -142,10 +142,8 @@ def isPacketValid(mode, deviceId, packetId):
 
 
 def gloveLoop():
+    thisThread = threading.currentThread()
 
-    rotate90 = R.from_euler("xyz", [0, 90, 0], degrees=True)
-    rotate90n = R.from_euler("xyz", [0, -90, 0], degrees=True)
-    rotate180n = R.from_euler("xyz", [0, -180, 0], degrees=True)
     rotM = np.eye(4)
 
     #################################
@@ -190,7 +188,7 @@ def gloveLoop():
 
         print("start receive loop")
         # receive loop
-        while ser.is_open:
+        while ser.is_open and getattr(thisThread, "run", True):
             # if requested: do synchronization
             if doSync:
                 while ser.is_open:
