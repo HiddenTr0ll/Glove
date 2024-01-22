@@ -54,18 +54,15 @@ class Scene:
         # settings.arm1.finger2.update(rate)
         # settings.arm1.spin(rate)
 
-        overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.whiteKeys)
-        for index, key in enumerate(self.keyboard.whiteKeys):
-            if index in overlap:
-                key.press()
-            else:
-                key.release()
+        overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.keys)
+        self.keyboard.updatePressed(overlap)
+
         self.keyboard.update(rate)
         self.arm1.update()
         pass
 
     def render(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
         glUseProgram(settings.shader)
 
         viewTransform = pyrr.matrix44.create_look_at(
@@ -78,9 +75,7 @@ class Scene:
 
         self.arm1.draw()
         self.keyboard.draw()
-        glFlush()
 
     def quit(self):
         glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
-        glDeleteVertexArrays(len(self.keyboard.whiteKeys), [o.vao for o in self.keyboard.whiteKeys])
-        glDeleteVertexArrays(len(self.keyboard.blackKeys), [o.vao for o in self.keyboard.blackKeys])
+        glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])

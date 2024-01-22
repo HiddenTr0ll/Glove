@@ -1,17 +1,22 @@
 from settings import *
 import settings
 from read_glove import gloveLoop
+from gui import GUI
 
 
 class GloveGL:
 
     def __init__(self):
 
-        self.glove_thread = threading.Thread(target=gloveLoop)
-        self.glove_thread.start()
+        # self.glove_thread = threading.Thread(target=gloveLoop)
+        # self.glove_thread.start()
 
         settings.init()
         self.mainScene = Scene()
+
+        self.gui = GUI()
+
+        self.menuDebounce = 0
 
         self.lastTime = glfw.get_time()
         self.currentTime = 0
@@ -36,28 +41,62 @@ class GloveGL:
         self.run()
         self.quit()
 
+    # Frame commands from the video
+    # def frame_commands():
+    #     io = imgui.get_io()
+    #     if io.key_ctrl and io.keys_down[glfw.KEY_Q]:
+    #         sys.exit(0)
+    #
+    #     if imgui.begin_main_menu_bar():
+    #         if imgui.begin_menu("File"):
+    #             clicked, selected = imgui.menu_item("Quit", "Ctrl+Q")
+    #             if clicked:
+    #                 sys.exit(0)
+    #             imgui.end_menu()
+    #         imgui.end_main_menu_bar()
+    #
+    #     with imgui.begin("A Window!"):
+    #         if imgui.button("select"):
+    #             imgui.open_popup("select-popup")
+    #
+    #         try:
+    #             with imgui.begin_popup("select-popup") as popup:
+    #                 if popup.opened:
+    #                     imgui.text("Select one")
+    #                     raise Exception
+    #         except Exception:
+    #             print("caught exception and no crash!")
+
     def run(self):
-        while not glfw.window_should_close(settings.window):
+        while not glfw.window_should_close(settings.window) and settings.running:
             if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_ESCAPE) \
                     == GLFW_CONSTANTS.GLFW_PRESS:
                 break
+            if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_P) \
+                    == GLFW_CONSTANTS.GLFW_PRESS:
+                if self.menuDebounce == 0:
+                    self.gui.menuEnabled = not self.gui.menuEnabled
+                    self.menuDebounce = 1000
+                    if not self.gui.menuEnabled:
+                        glfw.set_cursor_pos(settings.window, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+            else:
+                self.menuDebounce = 0
 
             self.handleKeys()
-            self.handleMouse()
+            if not self.gui.menuEnabled:
+                self.handleMouse()
             glfw.poll_events()
+
+            self.gui.render()
 
             # 1 frame every 16.7ms -> 60fps
             self.mainScene.update(self.frameTime/16.7)
             self.mainScene.render()
 
-            # if glfw.get_time() > 5 and glfw.get_time() < 6:
-            #    self.mainScene.keyboard.whiteKeys[10].press()
-            # if glfw.get_time() > 7 and glfw.get_time() < 11:
-            #    self.mainScene.keyboard.whiteKeys[10].release()
-            # glFlush()
-            # glfw.swap_buffers(settings.window)
+            settings.impl.render(imgui.get_draw_data())
 
             self.calculateFramerate()
+            glFlush()
 
     def handleKeys(self):
         combo = 0
@@ -106,20 +145,20 @@ class GloveGL:
         self.currentTime = glfw.get_time()
         delta = self.currentTime-self.lastTime
         if (delta >= 1):
-            framerate = max(1, int(self.numFrames/delta))
-            glfw.set_window_title(settings.window, f"Running at {framerate} fps.")
+            settings.framerate = max(1, int(self.numFrames/delta))
             self.lastTime = self.currentTime
             self.numFrames = -1
-            self.frameTime = float(1000.0/max(1, framerate))
+            self.frameTime = float(1000.0/max(1, settings.framerate))
         self.numFrames += 1
 
     def quit(self):
-        self.glove_thread.run = False
+        # self.glove_thread.run = False
         self.mainScene.quit()
         glDeleteProgram(settings.shader)
         settings.texture.destroy()
         glfw.destroy_window(settings.window)
         glfw.terminate()
+        # settings.impl.shutdown()
 
 
 glovegl = GloveGL()

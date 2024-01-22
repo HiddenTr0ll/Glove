@@ -18,6 +18,8 @@ from scene import Scene
 from material import Material
 import pyrr
 
+import imgui
+from imgui.integrations.glfw import GlfwRenderer
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 900
@@ -26,13 +28,37 @@ TARGET_FPS = 60
 RETURN_ACTION_CONTINUE = 0
 RETURN_ACTION_END = 1
 
+FONT_PATH = None  # "path/to/font.ttf"
+FONT_SCALING_FACTOR = 0.7
+
 
 def init():
+
+    global running
+    running = True
+
+    global recording
+    recording = False
+
+    global framerate
+    framerate = 0
+
     global rotationList
     rotationList = [pyrr.matrix44.create_identity() for _ in range(7)]
 
+    imgui.create_context()
+
     global window
     window = initGLFW()
+
+    global impl
+    impl = GlfwRenderer(window)
+
+    global font
+    io = imgui.get_io()
+    font = io.fonts.add_font_from_file_ttf(FONT_PATH, 30) if FONT_PATH is not None else None
+    io.font_global_scale /= FONT_SCALING_FACTOR
+    impl.refresh_font_texture()
 
     global texture
     texture = Material("gfx/wood.png")
@@ -82,11 +108,11 @@ def initGLFW():
 
     window = glfw.create_window(SCREEN_WIDTH, SCREEN_HEIGHT, "GloveGL", None, None)
     glfw.make_context_current(window)
-    glfw.set_input_mode(
-        window,
-        GLFW_CONSTANTS.GLFW_CURSOR,
-        GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
-    )
+    # glfw.set_input_mode(
+    #    window,
+    #    GLFW_CONSTANTS.GLFW_CURSOR,
+    #    GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
+    # )
     # glfw.swap_interval(1)
     return window
 
