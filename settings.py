@@ -37,6 +37,12 @@ def init():
     global running
     running = True
 
+    global fileName
+    fileName = "NewMidi"
+
+    global save
+    save = False
+
     global recording
     recording = False
 

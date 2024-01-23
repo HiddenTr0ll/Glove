@@ -7,14 +7,15 @@ class GUI():
         self.menuEnabled = False
         self.settings = {
             "debug": False,
-
+            "save": False
         }
 
         self.active2 = {
             "recording": False
+
         }
         self.active = {
-            "window": True,
+            "window": False,
             "child": False,
             "tooltip": False,
             "menu bar": False,
@@ -32,6 +33,26 @@ class GUI():
 
     def frame_commands(self):
         io = imgui.get_io()
+
+        if self.settings["save"]:
+            imgui.open_popup("Save recorded Midi to file?")
+            imgui.set_next_window_size(300, 100)
+            with imgui.begin_popup_modal("Save recorded Midi to file?", flags=imgui.WINDOW_NO_RESIZE) as popup:
+                if popup.opened:
+                    imgui.text('Save as:')
+                    imgui.same_line(spacing=10)
+                    changed, settings.fileName = imgui.input_text('',  settings.fileName, flags=imgui.INPUT_TEXT_AUTO_SELECT_ALL)
+
+                    clicked_yes = imgui.button('Yes', width=50)
+                    imgui.same_line(spacing=10)
+                    clicked_no = imgui.button('No', width=50)
+
+                    if clicked_yes:
+                        settings.save = True
+                        self.settings["save"] = False
+                    if clicked_no:
+                        settings.fileName = "NewMidi"
+                        self.settings["save"] = False
 
         with imgui.begin_main_menu_bar() as main_menu_bar:
             if main_menu_bar.opened:

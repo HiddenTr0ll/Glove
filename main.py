@@ -80,6 +80,12 @@ class GloveGL:
                 settings.recording = False
                 self.mainScene.keyboard.stopRecording()
 
+            if settings.save:
+                # self.mainScene.keyboard.saveRecording(settings.fileName)
+                print(settings.fileName)
+                settings.fileName = "NewMidi"
+                settings.save = False
+
             # 1 frame every 16.7ms -> 60fps
             self.mainScene.update(self.frameTime/16.7)
             self.mainScene.render()
