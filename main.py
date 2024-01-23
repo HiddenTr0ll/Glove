@@ -8,8 +8,8 @@ class GloveGL:
 
     def __init__(self):
 
-        # self.glove_thread = threading.Thread(target=gloveLoop)
-        # self.glove_thread.start()
+        self.glove_thread = threading.Thread(target=gloveLoop)
+        self.glove_thread.start()
 
         settings.init()
         self.mainScene = Scene()

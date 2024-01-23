@@ -5,14 +5,14 @@ from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
 from key import *
 import pyrr
-import midi  # https://github.com/vishnubob/python-midi
+from mido import Message, MidiFile, MidiTrack
 
 OCTAVES = 3
 
 
 class Keyboard():
     def __init__(self):
-        self.pattern = None
+        self.file = None
         self.track = None
         self.lastTick = 0
         #                         x, y, z
@@ -23,7 +23,7 @@ class Keyboard():
         for i in range(OCTAVES):
             position = 0
             for j in range(12):
-                if j in midi.WHITE_KEYS:
+                if j in [0, 2, 4, 5, 7, 9, 11]:  # whitekeys
                     self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2, 0, 0], dtype=np.float32), "white"))
                     position += 1
                 else:
@@ -50,43 +50,39 @@ class Keyboard():
         toRelease = self.keyPressed - pressed
         toPress = pressed - self.keyPressed
         self.keyPressed = pressed
+        delta = int(1000*(glfw.get_time() - self.lastTick))
+        print(delta)
         keyIndex: int
         for keyIndex in toPress:
-            print("keyindex: " + keyIndex)
             self.keys[keyIndex].press()
             if (settings.recording):
-                self.record(True, keyIndex)
+                self.record("note_on", keyIndex, delta)
         for keyIndex in toRelease:
             self.keys[keyIndex].release()
             if (settings.recording):
-                self.record(False, keyIndex)
-        self.lastTick = glfw.get_time()
+                self.record("note_off", keyIndex, delta)
+
+        if len(toPress) != 0 or len(toRelease) != 0:
+            self.lastTick = glfw.get_time()
 
     def startRecording(self):
         if not settings.recording:
-            self.pattern = midi.Pattern()
-            self.track = midi.Track()
-            self.pattern.append(self.track)
+            self.file = MidiFile()
+            self.track = MidiTrack()
+            self.file.tracks.append(self.track)
+
+            self.track.append(Message('program_change', program=12, time=0))
+
             self.lastTick = glfw.get_time()
             settings.recording = True
 
     def stopRecording(self):
         if settings.recording:
             settings.recording = False
-            delta = int(1000*(glfw.get_time() - self.lastTick))
-            eot = midi.EndOfTrackEvent(tick=delta)
-            self.track.append(eot)
-            print(self.pattern)
 
     def saveRecording(self, name):
-        midi.write_midifile("midis/"+name+".mid", self.pattern)
+        self.file.save("midis/"+name+'.mid')
 
-    def record(self, pressed, keyIndex):
-        if self.pattern is not None and self.track is not None:
-            delta = int(1000*(glfw.get_time() - self.lastTick))
-            if pressed:  # key pressed
-                on = midi.NoteOnEvent(tick=delta, velocity=20, pitch=keyIndex)
-                self.track.append(on)
-            else:       # key released
-                off = midi.NoteOffEvent(tick=delta, pitch=keyIndex)
-                self.track.append(off)
+    def record(self, status, keyIndex, delta):
+        if self.file is not None and self.track is not None:
+            self.track.append(Message(status, note=64+keyIndex, velocity=64, time=delta))
