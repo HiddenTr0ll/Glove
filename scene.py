@@ -55,7 +55,7 @@ class Scene:
         # settings.arm1.spin(rate)
 
         overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.keys)
-        self.keyboard.updatePressed(overlap)
+        self.keyboard.updatePressed(set(overlap))
 
         self.keyboard.update(rate)
         self.arm1.update()

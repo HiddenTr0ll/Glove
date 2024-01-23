@@ -108,12 +108,11 @@ def initGLFW():
 
     window = glfw.create_window(SCREEN_WIDTH, SCREEN_HEIGHT, "GloveGL", None, None)
     glfw.make_context_current(window)
-    # glfw.set_input_mode(
-    #    window,
-    #    GLFW_CONSTANTS.GLFW_CURSOR,
-    #    GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
-    # )
-    # glfw.swap_interval(1)
+    glfw.set_input_mode(
+        window,
+        GLFW_CONSTANTS.GLFW_CURSOR,
+        GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
+    )
     return window
 
 

@@ -41,44 +41,26 @@ class GloveGL:
         self.run()
         self.quit()
 
-    # Frame commands from the video
-    # def frame_commands():
-    #     io = imgui.get_io()
-    #     if io.key_ctrl and io.keys_down[glfw.KEY_Q]:
-    #         sys.exit(0)
-    #
-    #     if imgui.begin_main_menu_bar():
-    #         if imgui.begin_menu("File"):
-    #             clicked, selected = imgui.menu_item("Quit", "Ctrl+Q")
-    #             if clicked:
-    #                 sys.exit(0)
-    #             imgui.end_menu()
-    #         imgui.end_main_menu_bar()
-    #
-    #     with imgui.begin("A Window!"):
-    #         if imgui.button("select"):
-    #             imgui.open_popup("select-popup")
-    #
-    #         try:
-    #             with imgui.begin_popup("select-popup") as popup:
-    #                 if popup.opened:
-    #                     imgui.text("Select one")
-    #                     raise Exception
-    #         except Exception:
-    #             print("caught exception and no crash!")
-
     def run(self):
         while not glfw.window_should_close(settings.window) and settings.running:
             if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_ESCAPE) \
-                    == GLFW_CONSTANTS.GLFW_PRESS:
-                break
-            if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_P) \
                     == GLFW_CONSTANTS.GLFW_PRESS:
                 if self.menuDebounce == 0:
                     self.gui.menuEnabled = not self.gui.menuEnabled
                     self.menuDebounce = 1000
                     if not self.gui.menuEnabled:
+                        glfw.set_input_mode(
+                            settings.window,
+                            GLFW_CONSTANTS.GLFW_CURSOR,
+                            GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
+                        )
                         glfw.set_cursor_pos(settings.window, SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
+                    else:
+                        glfw.set_input_mode(
+                            settings.window,
+                            GLFW_CONSTANTS.GLFW_CURSOR,
+                            GLFW_CONSTANTS.GLFW_CURSOR_NORMAL
+                        )
             else:
                 self.menuDebounce = 0
 

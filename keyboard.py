@@ -18,7 +18,7 @@ class Keyboard():
         #                         x, y, z
         self.position = np.array([-10, 55, 0], dtype=np.float32)
         self.keys: list[Key] = []
-        self.keyPressed = {}
+        self.keyPressed = set()
 
         for i in range(OCTAVES):
             position = 0
@@ -27,7 +27,7 @@ class Keyboard():
                     self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2, 0, 0], dtype=np.float32), "white"))
                     position += 1
                 else:
-                    self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2 - 1.1, 0, 2], dtype=np.float32), "black"))
+                    self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2 - 1.1, 0, 1.5], dtype=np.float32), "black"))
 
     def update(self, rate):
         for key in self.keys:
@@ -45,21 +45,17 @@ class Keyboard():
                 key.get_model_transform())
             glDrawArrays(GL_TRIANGLES, 0, key.vertexCount)
 
-    def updatePressed(self, pressedWhite):
+    def updatePressed(self, pressed):
         # set(new) ^ set(old) XOR?
-        # toRelease = self.keyPressed - pressedWhite
-        # toPress = pressedWhite - self.keyPressed
-        # self.keyPressed = pressedWhite
+        toRelease = self.keyPressed - pressed
+        toPress = pressed - self.keyPressed
+        self.keyPressed = pressed
 
-        for index, key in enumerate(self.keyPressed):
-            if index in pressedWhite:
-                if not key.isPressed:
-                    key.press()
-                    self.record(True, index)
-            else:
-                if key.isPressed:
-                    key.release()
-                    self.record(False, index)
+        for keyIndex in toPress:
+            self.keys[keyIndex].press()
+
+        for keyIndex in toRelease:
+            self.keys[keyIndex].release()
 
     def startRecording(self):
         settings.recording = True

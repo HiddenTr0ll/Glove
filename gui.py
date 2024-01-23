@@ -37,7 +37,7 @@ class GUI():
             if main_menu_bar.opened:
                 with imgui.begin_menu("File", True) as file_menu:
                     if file_menu.opened:
-                        clicked_quit, selected_quit = imgui.menu_item("Quit", "ESC")
+                        clicked_quit, selected_quit = imgui.menu_item("Quit", "ALT + F4")
                         if clicked_quit:
                             settings.running = False
                 with imgui.begin_menu("Recording", True) as recording_menu:
