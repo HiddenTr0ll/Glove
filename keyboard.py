@@ -52,37 +52,38 @@ class Keyboard():
         self.keyPressed = pressed
         keyIndex: int
         for keyIndex in toPress:
+            print("keyindex: " + keyIndex)
             self.keys[keyIndex].press()
-
+            if (settings.recording):
+                self.record(True, keyIndex)
         for keyIndex in toRelease:
             self.keys[keyIndex].release()
-
-        if (settings.recording):
-            self.record(True, toPress)
-            self.record(False, toRelease)
+            if (settings.recording):
+                self.record(False, keyIndex)
+        self.lastTick = glfw.get_time()
 
     def startRecording(self):
-        settings.recording = True
-        self.pattern = midi.Pattern()
-        self.track = midi.Track()
-        self.pattern.append(self.track)
-        self.lastTick = glfw.get_time()
-        pass
+        if not settings.recording:
+            self.pattern = midi.Pattern()
+            self.track = midi.Track()
+            self.pattern.append(self.track)
+            self.lastTick = glfw.get_time()
+            settings.recording = True
 
     def stopRecording(self):
-        settings.recording = False
-        delta = glfw.get_time() - self.lastTick
-        eot = midi.EndOfTrackEvent(tick=delta)
-        self.track.append(eot)
-        print(self.pattern)
+        if settings.recording:
+            settings.recording = False
+            delta = int(1000*(glfw.get_time() - self.lastTick))
+            eot = midi.EndOfTrackEvent(tick=delta)
+            self.track.append(eot)
+            print(self.pattern)
 
     def saveRecording(self, name):
-        midi.write_midifile(name, self.pattern)
+        midi.write_midifile("midis/"+name+".mid", self.pattern)
 
     def record(self, pressed, keyIndex):
         if self.pattern is not None and self.track is not None:
-            delta = glfw.get_time() - self.lastTick
-
+            delta = int(1000*(glfw.get_time() - self.lastTick))
             if pressed:  # key pressed
                 on = midi.NoteOnEvent(tick=delta, velocity=20, pitch=keyIndex)
                 self.track.append(on)

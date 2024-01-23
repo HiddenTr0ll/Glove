@@ -72,16 +72,15 @@ class GloveGL:
 
             if settings.startRecording:
                 settings.startRecording = False
-                settings.recording = True
                 self.mainScene.keyboard.startRecording()
 
             if settings.stopRecording:
                 settings.stopRecording = False
-                settings.recording = False
                 self.mainScene.keyboard.stopRecording()
+                self.gui.settings["saveDialog"] = True
 
             if settings.save:
-                # self.mainScene.keyboard.saveRecording(settings.fileName)
+                self.mainScene.keyboard.saveRecording(settings.fileName)
                 print(settings.fileName)
                 settings.fileName = "NewMidi"
                 settings.save = False
