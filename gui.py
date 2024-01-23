@@ -45,9 +45,10 @@ class GUI():
                         clicked_start, selected_start = imgui.menu_item("Start", "F5")
                         clicked_stop, selected_stop = imgui.menu_item("Stop", "F6")
                         if clicked_start:
-                            settings.recording = True
+                            settings.startRecording = True
+
                         if clicked_stop:
-                            settings.recording = False
+                            settings.stopRecording = True
 
                 with imgui.begin_menu("Settings", True) as settings_menu:
                     if settings_menu.opened:

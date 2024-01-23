@@ -13,7 +13,6 @@ class GloveGL:
 
         settings.init()
         self.mainScene = Scene()
-
         self.gui = GUI()
 
         self.menuDebounce = 0
@@ -70,6 +69,16 @@ class GloveGL:
             glfw.poll_events()
 
             self.gui.render()
+
+            if settings.startRecording:
+                settings.startRecording = False
+                settings.recording = True
+                self.mainScene.keyboard.startRecording()
+
+            if settings.stopRecording:
+                settings.stopRecording = False
+                settings.recording = False
+                self.mainScene.keyboard.stopRecording()
 
             # 1 frame every 16.7ms -> 60fps
             self.mainScene.update(self.frameTime/16.7)

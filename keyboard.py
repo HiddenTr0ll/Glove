@@ -50,12 +50,16 @@ class Keyboard():
         toRelease = self.keyPressed - pressed
         toPress = pressed - self.keyPressed
         self.keyPressed = pressed
-
+        keyIndex: int
         for keyIndex in toPress:
             self.keys[keyIndex].press()
 
         for keyIndex in toRelease:
             self.keys[keyIndex].release()
+
+        if (settings.recording):
+            self.record(True, toPress)
+            self.record(False, toRelease)
 
     def startRecording(self):
         settings.recording = True
@@ -67,20 +71,21 @@ class Keyboard():
 
     def stopRecording(self):
         settings.recording = False
-        eot = midi.EndOfTrackEvent(tick=1)
+        delta = glfw.get_time() - self.lastTick
+        eot = midi.EndOfTrackEvent(tick=delta)
         self.track.append(eot)
         print(self.pattern)
 
+    def saveRecording(self, name):
+        midi.write_midifile(name, self.pattern)
+
     def record(self, pressed, keyIndex):
+        if self.pattern is not None and self.track is not None:
+            delta = glfw.get_time() - self.lastTick
 
-        if settings.recording:
-            if self.pattern is not None:
-
-                delta = glfw.get_time() - self.lastTick
-                on = midi.NoteOnEvent(tick=delta, velocity=20, pitch=midi.G_3)
+            if pressed:  # key pressed
+                on = midi.NoteOnEvent(tick=delta, velocity=20, pitch=keyIndex)
                 self.track.append(on)
-
-                off = midi.NoteOffEvent(tick=delta, pitch=midi.G_3)
+            else:       # key released
+                off = midi.NoteOffEvent(tick=delta, pitch=keyIndex)
                 self.track.append(off)
-
-        pass

@@ -40,6 +40,12 @@ def init():
     global recording
     recording = False
 
+    global startRecording
+    startRecording = False
+
+    global stopRecording
+    stopRecording = False
+
     global framerate
     framerate = 0
 
