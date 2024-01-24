@@ -52,6 +52,9 @@ def init():
     global stopRecording
     stopRecording = False
 
+    global audioOn
+    audioOn = False
+
     global framerate
     framerate = 0
 

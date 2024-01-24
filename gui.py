@@ -7,7 +7,8 @@ class GUI():
         self.menuEnabled = False
         self.settings = {
             "debug": False,
-            "saveDialog": False
+            "saveDialog": False,
+            "audioOn": False
         }
 
         self.active2 = {
@@ -33,7 +34,8 @@ class GUI():
 
     def frame_commands(self):
         io = imgui.get_io()
-
+        if settings.audioOn == False:
+            self.settings["audioOn"] = False
         if self.settings["saveDialog"]:
             imgui.open_popup("Save recorded Midi to file?")
             imgui.set_next_window_size(300, 100)
@@ -74,9 +76,11 @@ class GUI():
                 with imgui.begin_menu("Settings", True) as settings_menu:
                     if settings_menu.opened:
                         for label, enabled in self.settings.copy().items():
-                            _, enabled = imgui.checkbox(label, enabled)
+                            clicked, enabled = imgui.checkbox(label, enabled)
                             self.settings[label] = enabled
-
+                            if label == "audioOn":
+                                if enabled:
+                                    settings.audioOn = True
         if self.settings["debug"]:
 
             with imgui.begin("Debug", flags=(imgui.WINDOW_ALWAYS_AUTO_RESIZE+imgui.WINDOW_NO_COLLAPSE)):
