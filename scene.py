@@ -9,35 +9,32 @@ class Scene:
 
     def __init__(self):
         # init all arms and keyboard here
-        self.camPos = np.array([60, 15, 20], dtype=np.float32)
-        self.camTheta = 150
-        self.camPhi = -20
         self.updateCameraVectors()
         self.arm1 = Arm()
         self.keyboard = Keyboard()
 
     def moveCamera(self, dPos):
         dPos = np.array(dPos, dtype=np.float32)
-        self.camPos += dPos
+        settings.camPos += dPos
 
     def spinCamera(self, dTheta, dPhi):
-        self.camTheta += dTheta
-        self.camPhi += dPhi
-        if self.camTheta > 360:
-            self.camTheta -= 360
-        elif self.camTheta < 0:
-            self.camTheta += 360
+        settings.camTheta += dTheta
+        settings.camPhi += dPhi
+        if settings.camTheta > 360:
+            settings.camTheta -= 360
+        elif settings.camTheta < 0:
+            settings.camTheta += 360
 
-        self.camPhi = min(
-            89, max(-89, self.camPhi + dPhi)
+        settings.camPhi = min(
+            89, max(-89, settings.camPhi + dPhi)
         )
         self.updateCameraVectors()
 
     def updateCameraVectors(self):
         self.forwards = np.array([
-            np.cos(np.deg2rad(self.camTheta))*np.cos(np.deg2rad(self.camPhi)),
-            np.sin(np.deg2rad(self.camTheta))*np.cos(np.deg2rad(self.camPhi)),
-            np.sin(np.deg2rad(self.camPhi))
+            np.cos(np.deg2rad(settings.camTheta))*np.cos(np.deg2rad(settings.camPhi)),
+            np.sin(np.deg2rad(settings.camTheta))*np.cos(np.deg2rad(settings.camPhi)),
+            np.sin(np.deg2rad(settings.camPhi))
         ])
 
         globalUp = np.array([0, 0, 1], dtype=np.float32)
@@ -66,8 +63,8 @@ class Scene:
         glUseProgram(settings.shader)
 
         viewTransform = pyrr.matrix44.create_look_at(
-            eye=self.camPos,
-            target=self.camPos+self.forwards,
+            eye=settings.camPos,
+            target=settings.camPos+self.forwards,
             up=self.up,
             dtype=np.float32
         )

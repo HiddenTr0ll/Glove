@@ -85,6 +85,9 @@ class GUI():
 
             with imgui.begin("Debug", flags=(imgui.WINDOW_ALWAYS_AUTO_RESIZE+imgui.WINDOW_NO_COLLAPSE)):
                 imgui.text("Framerate: " + str(settings.framerate) + " FPS")
+                imgui.text("CamPos: " + np.array2string(settings.camPos, precision=2))
+                imgui.text("CamTheta: " + str(settings.camTheta))
+                imgui.text("CamPhi: " + str(settings.camPhi))
 
         # turn examples on/off
         with imgui.begin("self.active examples"):

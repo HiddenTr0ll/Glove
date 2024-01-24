@@ -13,9 +13,9 @@ import datetime
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 import threading
-
-from scene import Scene
 from material import Material
+from scene import Scene
+
 import pyrr
 
 import imgui
@@ -68,6 +68,15 @@ def init():
 
     global impl
     impl = GlfwRenderer(window)
+
+    global camPos
+    camPos = np.array([60, 15, 20], dtype=np.float32)
+
+    global camTheta
+    camTheta = 150
+
+    global camPhi
+    camPhi = -20
 
     global font
     io = imgui.get_io()
