@@ -21,7 +21,7 @@ from scipy.spatial.transform import Rotation as R
 
 serport = settings.SER_PORT  # '/dev/ttyACM0' #'COM5'
 
-mode = 1
+mode = settings.MODE
 showData = 1
 dataCount = 1000000
 maxNumModes = 2
@@ -30,7 +30,6 @@ singleNode_Id = 0
 glove_v1_Id = 1
 glove_v2_Id = 2
 
-sensors = ["wrist", "palm", "thumb", "index", "mid", "ring", "pinky"]
 
 hand = {
     "lowerArm": 0,
@@ -52,31 +51,6 @@ class Joint:
     posY = 0
     posZ = 0
     rotation = R.from_euler("xyz", [0, 0, 0], degrees=True)
-
-
-# Write CSV file
-def write_CSV(filename, sensorNames, data, mode=0):
-    try:
-        with open(filename, "w") as csvfile:
-            i = 0
-            for sName in sensorNames:
-                if mode == 0:
-                    csvfile.write("Sensor," + str(i) + ",4," + sName +
-                                  ",Orientation\n")
-                elif mode == 1:
-                    csvfile.write("Sensor," + str(i) + ",7," + sName +
-                                  ",OrientationAcceleration\n")
-                i += 1
-
-            csv_writer = csv.writer(csvfile,
-                                    delimiter=",",
-                                    lineterminator="\n")
-            csv_writer.writerows(data)
-    except Exception as e:
-        print("Error in write_CSV:")
-        print(e)
-        return 0
-    return 1
 
 
 # helper functions for quaternion viz:
@@ -264,8 +238,7 @@ def gloveLoop():
                 if deviceId == singleNode_Id:
                     # packetLength = 8, 1
                     quat = np.array(struct.unpack("<4h", packet)) / 16384
-                    data[count] = [nodeId << 4, ts, quat[1], -quat[3], quat[2], quat[0], 0, 0, 0]
-                    count += 1
+                    settings.recorder.recordMovement([nodeId << 4, ts, quat[1], -quat[3], quat[2], quat[0], 0, 0, 0])
 
                 else:
                     # packetLength = 18, 3 or 24, 4
@@ -299,8 +272,7 @@ def gloveLoop():
                             imuQ = imuQ * R.from_euler("xyz", [-90, 180, 0], degrees=True)
 
                         #######################################################################################
-                        data[count] = [ID, ts, *imuQ.as_quat(), 0, 0, 0]
-
+                        settings.recorder.recordMovement([ID, ts, *imuQ.as_quat(), 0, 0, 0])
                         rotM = np.eye(4)
 
                         # convert to rotation matrix
@@ -412,15 +384,6 @@ def gloveLoop():
                 # print('time: ' + str(ts/1000) + '  count: ' + str(count))
                 nextTs += 1000
 
-            if False:
-                if count > 0:
-                    # adjust data for displaying purposes
-                    data = data[:count]
-                    data[:, 1] -= np.min(data[:, 1])
-
-                # set count to zero not write to a file
-                count = 0
-                break
     except Exception as e:
         print("An error occured during recording")
         print(e)
@@ -428,22 +391,3 @@ def gloveLoop():
 
     finally:
         ser.close()
-
-    if count > 0:
-        # adjust data to write
-        data = data[:count]
-        data[:, 1] -= np.min(data[:, 1])
-
-        print("\nwriting to file...")
-
-        if mode == 0:
-            dataToWrite = [[int(d[0]), int(round(d[1])), d[2], d[3], d[4], d[5]]for d in data]
-        elif mode == 1:
-            dataToWrite = [[int(d[0]), int(round(d[1])), d[2], d[3], d[4], d[5], d[6], d[7], d[8]] for d in data]
-
-        # write data to file (otherwise recording was aborted)
-        if write_CSV(path + filename, sensors, dataToWrite, mode):
-            print("written to " + path + filename)
-
-    else:
-        print("recording aborted or no data available")

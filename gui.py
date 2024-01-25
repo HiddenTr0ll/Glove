@@ -5,16 +5,15 @@ import settings
 class GUI():
     def __init__(self):
         self.menuEnabled = False
+        self.saveDialogEnabled = False
+        self.saveMode = ""
+        self.fileName = ""
         self.settings = {
             "debug": False,
             "saveDialog": False,
             "audioOn": False
         }
 
-        self.active2 = {
-            "recording": False
-
-        }
         self.active = {
             "window": False,
             "child": False,
@@ -36,25 +35,28 @@ class GUI():
         io = imgui.get_io()
         if settings.audioOn == False:
             self.settings["audioOn"] = False
-        if self.settings["saveDialog"]:
-            imgui.open_popup("Save recorded Midi to file?")
+
+        if self.saveDialogEnabled:
+            imgui.open_popup("Save recorded "+self.saveMode+"s to file?")
             imgui.set_next_window_size(300, 100)
-            with imgui.begin_popup_modal("Save recorded Midi to file?", flags=imgui.WINDOW_NO_RESIZE) as popup:
+            with imgui.begin_popup_modal("Save recorded "+self.saveMode+"s to file?", flags=imgui.WINDOW_NO_RESIZE) as popup:
                 if popup.opened:
                     imgui.text('Save as:')
                     imgui.same_line(spacing=10)
-                    changed, settings.fileName = imgui.input_text('',  settings.fileName, flags=imgui.INPUT_TEXT_AUTO_SELECT_ALL)
+                    changed, self.fileName = imgui.input_text('',  self.fileName, flags=imgui.INPUT_TEXT_AUTO_SELECT_ALL)
 
                     clicked_yes = imgui.button('Yes', width=50)
                     imgui.same_line(spacing=10)
                     clicked_no = imgui.button('No', width=50)
 
                     if clicked_yes:
-                        settings.save = True
-                        self.settings["saveDialog"] = False
+                        if self.saveMode == "Key":
+                            settings.recorder.saveKeyRecording(self.fileName)
+                        else:
+                            settings.recorder.saveMovementRecording(self.fileName)
+                        self.saveDialogEnabled = False
                     if clicked_no:
-                        settings.fileName = "NewMidi"
-                        self.settings["saveDialog"] = False
+                        self.saveDialogEnabled = False
 
         with imgui.begin_main_menu_bar() as main_menu_bar:
             if main_menu_bar.opened:
@@ -63,15 +65,29 @@ class GUI():
                         clicked_quit, selected_quit = imgui.menu_item("Quit", "ALT + F4")
                         if clicked_quit:
                             settings.running = False
-                with imgui.begin_menu("Recording", True) as recording_menu:
+                with imgui.begin_menu("Record", True) as recording_menu:
                     if recording_menu.opened:
-                        clicked_start, selected_start = imgui.menu_item("Start", "F5")
-                        clicked_stop, selected_stop = imgui.menu_item("Stop", "F6")
-                        if clicked_start:
-                            settings.startRecording = True
+                        if not settings.recorder.recordingKeys:
+                            clickedRecordKeys, _ = imgui.menu_item("Start Key Recording", "F5")
+                        else:
+                            clickedRecordKeys, _ = imgui.menu_item("Stop Key Recording", "F5")
+                        if clickedRecordKeys:
+                            if not settings.recorder.recordingKeys:
+                                settings.recorder.startKeyRecording()
+                            else:
+                                settings.recorder.stopKeyRecording()
+                                self.saveDialog("Key")
 
-                        if clicked_stop:
-                            settings.stopRecording = True
+                        if not settings.recorder.recordingMovement:
+                            clickedRecordMovement, _ = imgui.menu_item("Start Movement Recording", "F6")
+                        else:
+                            clickedRecordMovement, _ = imgui.menu_item("Stop Movement Recording", "F6")
+                        if clickedRecordMovement:
+                            if not settings.recorder.recordingMovement:
+                                settings.recorder.startMovementRecording()
+                            else:
+                                settings.recorder.stopMovementRecording()
+                                self.saveDialog("Movement")
 
                 with imgui.begin_menu("Settings", True) as settings_menu:
                     if settings_menu.opened:
@@ -249,6 +265,16 @@ class GUI():
 
                         imgui.table_next_column()
                         imgui.text("333")
+
+    def saveDialog(self, mode):
+        if mode == "Movement" and settings.recorder.movementCount == 0:
+            print("recording aborted or no data available")
+        if mode == "Key" and settings.recorder.keyCount == 0:
+            print("recording aborted or no data available")
+        else:
+            self.saveDialogEnabled = True
+            self.saveMode = mode
+            self.fileName = "New"+mode+"File"
 
     def render(self):
         settings.impl.process_inputs()

@@ -15,6 +15,7 @@ from scipy.spatial.transform import Rotation as R
 import threading
 from material import Material
 from scene import Scene
+from recorder import Recorder
 
 import pyrr
 
@@ -24,6 +25,7 @@ from imgui.integrations.glfw import GlfwRenderer
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 900
 SER_PORT = "COM3"
+MODE = 0
 TARGET_FPS = 60
 RETURN_ACTION_CONTINUE = 0
 RETURN_ACTION_END = 1
@@ -37,20 +39,8 @@ def init():
     global running
     running = True
 
-    global fileName
-    fileName = "NewMidi"
-
-    global save
-    save = False
-
-    global recording
-    recording = False
-
-    global startRecording
-    startRecording = False
-
-    global stopRecording
-    stopRecording = False
+    global recorder
+    recorder = Recorder()
 
     global audioOn
     audioOn = False

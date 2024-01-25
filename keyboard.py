@@ -4,8 +4,6 @@ from settings import *
 from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
 from key import *
-import pyrr
-from mido import Message, MidiFile, MidiTrack
 import time
 
 OCTAVES = 3
@@ -17,9 +15,7 @@ class Keyboard():
         self.sfid = None
         if (settings.audioOn):
             self.initAudio()
-        self.file = None
-        self.track = None
-        self.lastTick = 0
+
         #                         x, y, z
         self.position = np.array([-10, 55, 0], dtype=np.float32)
         self.keys: list[Key] = []
@@ -67,41 +63,13 @@ class Keyboard():
         toRelease = self.keyPressed - pressed
         toPress = pressed - self.keyPressed
         self.keyPressed = pressed
-        delta = int(1000*(glfw.get_time() - self.lastTick))
+        settings.recorder.recordKeys(toPress, toRelease)
         keyIndex: int
         for keyIndex in toPress:
             self.keys[keyIndex].press()
-            if (settings.recording):
-                self.record("note_on", keyIndex, delta)
             if (settings.audioOn):
                 self.fs.noteon(0, keyIndex+46, 30)
         for keyIndex in toRelease:
             self.keys[keyIndex].release()
-            if (settings.recording):
-                self.record("note_off", keyIndex+48, delta)
             if (settings.audioOn):
                 self.fs.noteoff(0, keyIndex)
-        if len(toPress) != 0 or len(toRelease) != 0:
-            self.lastTick = glfw.get_time()
-
-    def startRecording(self):
-        if not settings.recording:
-            self.file = MidiFile()
-            self.track = MidiTrack()
-            self.file.tracks.append(self.track)
-
-            self.track.append(Message('program_change', program=12, time=0))
-
-            self.lastTick = glfw.get_time()
-            settings.recording = True
-
-    def stopRecording(self):
-        if settings.recording:
-            settings.recording = False
-
-    def saveRecording(self, name):
-        self.file.save("midis/"+name+'.mid')
-
-    def record(self, status, keyIndex, delta):
-        if self.file is not None and self.track is not None:
-            self.track.append(Message(status, note=48+keyIndex, velocity=64, time=delta))

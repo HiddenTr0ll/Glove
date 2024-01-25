@@ -15,7 +15,9 @@ class GloveGL:
         self.mainScene = Scene()
         self.gui = GUI()
 
-        self.keyDebounce = 0
+        self.menuPressed = False
+        self.recordMovementPressed = False
+        self.recordKeyPressed = False
 
         self.lastTime = glfw.get_time()
         self.currentTime = 0
@@ -97,9 +99,9 @@ class GloveGL:
 
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_ESCAPE) \
                 == GLFW_CONSTANTS.GLFW_PRESS:
-            if self.keyDebounce == 0:
+            if not self.menuPressed:
                 self.gui.menuEnabled = not self.gui.menuEnabled
-                self.keyDebounce = 1000
+                self.menuPressed = True
                 if not self.gui.menuEnabled:
                     glfw.set_input_mode(
                         settings.window,
@@ -114,38 +116,39 @@ class GloveGL:
                         GLFW_CONSTANTS.GLFW_CURSOR_NORMAL
                     )
         else:
-            self.keyDebounce = 0
+            self.menuPressed = False
 
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_F5) \
                 == GLFW_CONSTANTS.GLFW_PRESS:
-            if not settings.recording:
-                settings.startRecording = True
-                print("started recording")
+            if not self.recordKeyPressed:
+                if not settings.recorder.recordingKeys:
+                    settings.recorder.startKeyRecording()
+                    print("started recording keys")
+                else:
+                    settings.recorder.stopKeyRecording()
+                    self.gui.saveDialog("Key")
+                    print("stopped recording keys")
+                self.recordKeyPressed = True
+        else:
+            self.recordKeyPressed = False
 
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_F6) \
                 == GLFW_CONSTANTS.GLFW_PRESS:
-            if settings.recording:
-                settings.stopRecording = True
-                print("stopped recording")
+            if not self.recordMovementPressed:
+                if not settings.recorder.recordingMovement:
+                    settings.recorder.startMovementRecording()
+                    print("started recording movement")
+                else:
+                    settings.recorder.stopMovementRecording()
+                    self.gui.saveDialog("Movement")
+                    print("stopped recording movement")
+                self.recordMovementPressed = True
+        else:
+            self.recordMovementPressed = False
 
     def handleEvents(self):
         if settings.audioOn:
             self.mainScene.keyboard.initAudio()
-
-        if settings.startRecording:
-            settings.startRecording = False
-            self.mainScene.keyboard.startRecording()
-
-        if settings.stopRecording:
-            settings.stopRecording = False
-            self.mainScene.keyboard.stopRecording()
-            self.gui.settings["saveDialog"] = True
-
-        if settings.save:
-            self.mainScene.keyboard.saveRecording(settings.fileName)
-            print(settings.fileName)
-            settings.fileName = "NewMidi"
-            settings.save = False
 
     def handleMouse(self):
         (x, y) = glfw.get_cursor_pos(settings.window)
