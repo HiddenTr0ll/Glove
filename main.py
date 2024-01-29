@@ -1,20 +1,15 @@
 from settings import *
 import settings
-from read_glove import gloveLoop
 from gui import GUI
 
 
 class GloveGL:
 
     def __init__(self):
-
-        self.glove_thread = threading.Thread(target=gloveLoop)
-        self.glove_thread.start()
-
         settings.init()
         self.mainScene = Scene()
         self.gui = GUI()
-
+        self.glove_thread = None
         self.menuPressed = False
         self.recordMovementPressed = False
         self.recordKeyPressed = False
@@ -169,7 +164,7 @@ class GloveGL:
         self.numFrames += 1
 
     def quit(self):
-        # self.glove_thread.run = False
+        settings.disconnectGlove()
         self.mainScene.quit()
         glDeleteProgram(settings.shader)
         settings.texture.destroy()

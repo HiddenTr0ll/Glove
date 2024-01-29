@@ -95,3 +95,12 @@ class Recorder():
                 print(e)
                 return 0
             return 1
+
+    def startMovementPlayback(self):
+        pass
+
+    def pauseMovementPlayback(self):
+        pass
+
+    def stopmovementPlayback(self):
+        pass

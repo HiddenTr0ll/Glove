@@ -1,5 +1,6 @@
 from settings import *
 import settings
+import os
 
 
 class GUI():
@@ -65,6 +66,28 @@ class GUI():
                         clicked_quit, selected_quit = imgui.menu_item("Quit", "ALT + F4")
                         if clicked_quit:
                             settings.running = False
+                with imgui.begin_menu("Glove", True) as file_menu:
+                    if file_menu.opened:
+                        if settings.gloveConnected:
+                            clicked_connect, _ = imgui.menu_item("Disonnect", "ALT + F4")
+                        else:
+                            clicked_connect, _ = imgui.menu_item("Connect", "ALT + F4")
+
+                        with imgui.begin_menu('Port', True) as open_recent_menu:
+                            if open_recent_menu.opened:
+                                for port in settings.serialPorts:
+                                    if port == settings.serialPort:
+                                        clicked, _ = imgui.menu_item(">"+port, None, False, True)
+                                    else:
+                                        clicked, _ = imgui.menu_item(port, None, False, True)
+                                    if clicked:
+                                        settings.serialPort = port
+                        if clicked_connect:
+                            if settings.gloveConnected:
+                                settings.disconnectGlove()
+                            else:
+                                settings.connectGlove()
+
                 with imgui.begin_menu("Record", True) as recording_menu:
                     if recording_menu.opened:
                         if not settings.recorder.recordingKeys:

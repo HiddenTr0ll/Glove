@@ -16,6 +16,10 @@ import threading
 from material import Material
 from scene import Scene
 from recorder import Recorder
+import sys
+import glob
+import serial
+from read_glove import gloveLoop
 
 import pyrr
 
@@ -24,7 +28,6 @@ from imgui.integrations.glfw import GlfwRenderer
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 900
-SER_PORT = "COM3"
 MODE = 0
 TARGET_FPS = 60
 RETURN_ACTION_CONTINUE = 0
@@ -34,16 +37,39 @@ FONT_PATH = None  # "path/to/font.ttf"
 FONT_SCALING_FACTOR = 0.7
 
 
-mouseSensitivity = 1
-movementSpeedH = 1
-movementSpeedV = 1
-
-camPos = np.array([60, 15, 20], dtype=np.float32)
-camTheta = 150
-camPhi = -20
-
-
 def init():
+    global mouseSensitivity
+    mouseSensitivity = 1
+
+    global movementSpeedH
+    movementSpeedH = 1
+
+    global movementSpeedV
+    movementSpeedV = 1
+
+    global camPos
+    camPos = np.array([60, 15, 20], dtype=np.float32)
+
+    global camTheta
+    camTheta = 150
+
+    global camPhi
+    camPhi = -20
+
+    global serialPorts
+    serialPorts = serial_ports()
+
+    global serialPort
+    if len(serialPorts) > 0:
+        serialPort = serialPorts[0]
+    else:
+        serialPort = None
+
+    global gloveThread
+    gloveThread = None
+
+    global gloveConnected
+    gloveConnected = False
 
     global running
     running = True
@@ -153,3 +179,45 @@ def create_shader_module(filepath: str, module_type: int) -> int:
         source_code = file.readlines()
 
     return compileShader(source_code, module_type)
+
+
+def connectGlove():
+    global gloveThread
+    global gloveConnected
+    if gloveConnected:  # stop thread if already running
+        gloveThread.run = False
+    gloveThread = threading.Thread(target=gloveLoop, args=(serialPort,))
+    print("Connecting to Port: " + serialPort)
+    gloveThread.start()
+    gloveConnected = True
+
+
+def disconnectGlove():
+    global gloveThread
+    global gloveConnected
+    if gloveConnected:
+        gloveThread.run = False
+        print("Disconnected from Port: " + serialPort)
+        gloveConnected = False
+
+
+def serial_ports():
+    if sys.platform.startswith('win'):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+    elif sys.platform.startswith('linux') or sys.platform.startswith('cygwin'):
+        # this excludes your current terminal "/dev/tty"
+        ports = glob.glob('/dev/tty[A-Za-z]*')
+    elif sys.platform.startswith('darwin'):
+        ports = glob.glob('/dev/tty.*')
+    else:
+        raise EnvironmentError('Unsupported platform')
+
+    result = []
+    for port in ports:
+        try:
+            s = serial.Serial(port)
+            s.close()
+            result.append(port)
+        except (OSError, serial.SerialException):
+            pass
+    return result

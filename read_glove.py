@@ -19,9 +19,7 @@ import datetime
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
 
-serport = settings.SER_PORT  # '/dev/ttyACM0' #'COM5'
 
-mode = settings.MODE
 showData = 1
 dataCount = 1000000
 maxNumModes = 2
@@ -115,7 +113,7 @@ def isPacketValid(mode, deviceId, packetId):
     return True
 
 
-def gloveLoop():
+def gloveLoop(port):
     thisThread = threading.currentThread()
 
     rotM = np.eye(4)
@@ -125,7 +123,7 @@ def gloveLoop():
     #################################
     ser = serial.Serial()
     ser.baudrate = 500000
-    ser.port = serport
+    ser.port = port
     ser.timeout = 0  # = None means wait forever, = 0 means do not wait
     ser.open()
     # iteration variables for storing to a log file:
@@ -137,7 +135,6 @@ def gloveLoop():
     doSync = False
     # object to store all data
     data = np.zeros((dataCount, 9))
-    filename = "log.csv"
 
     try:
         ser.reset_input_buffer()
