@@ -24,6 +24,7 @@ class Recorder():
         self.playbackDict = None
         self.playingMovement = False
         self.playbackPaused = True
+        self.loadedLines = 0
 
     def startKeyRecording(self):
         if not self.recordingKeys:
@@ -103,27 +104,28 @@ class Recorder():
             return 1
 
     def startMovementPlayback(self, file):
+        settings.disconnectGlove()
         try:
             with open("recordings/"+file) as csvfile:
-                lines = sum(1 for line in csvfile)-2
-                if lines <= 1:
+                self.loadedLines = sum(1 for line in csvfile)-2
+                if self.loadedLines <= 1:
                     raise Exception("No Data in CSV")
                 csvfile.seek(0)
                 for _ in range(2):  # skip header
                     next(csvfile)
                 reader = csv.reader(csvfile)
                 self.playbackDict = {}
-                self.playbackData = np.zeros((lines, 5))
+                self.playbackData = np.zeros((self.loadedLines, 5))
                 for index, row in enumerate(reader):
-                    if row[0] in self.playbackDict:  # if timestamp in dict
-                        self.playbackDict[row[0]].append(index)
+                    if int(row[0]) in self.playbackDict:  # if timestamp in dict
+                        self.playbackDict[int(row[0])].append(index)
                     else:
-                        self.playbackDict[row[0]] = [index]
+                        self.playbackDict[int(row[0])] = [index]
                     self.playbackData[index] = row[1:]
         except Exception as e:
             print("Error in read CSV:")
             print(e)
-        print(lines, "lines of Data loadet")
+        print(self.loadedLines, "lines of Data loadet")
         self.playingMovement = True
         self.playbackPaused = True
 
@@ -131,7 +133,11 @@ class Recorder():
         self.playbackPaused = not self.playbackPaused
 
     def stopMovementPlayback(self):
-        pass
+        self.playbackData = None
+        self.playingMovement = False
+        self.playbackPaused = True
 
-    def getMovementFiles(self):
-        pass
+    def updateMovement(self):
+        if not self.playbackPaused:
+            pass
+            # TODO implement rotationlist updates here

@@ -46,6 +46,8 @@ class GloveGL:
             if not self.gui.menuEnabled:
                 self.handleMouse()
 
+            settings.recorder.updateMovement()
+
             glfw.poll_events()
 
             self.gui.render()

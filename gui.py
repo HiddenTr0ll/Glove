@@ -37,6 +37,21 @@ class GUI():
         if settings.audioOn == False:
             self.settings["audioOn"] = False
 
+        if settings.recorder.playingMovement:
+            with imgui.begin("Playback Control", flags=(imgui.WINDOW_NO_RESIZE+imgui.WINDOW_NO_COLLAPSE+imgui.WINDOW_ALWAYS_AUTO_RESIZE)):
+                imgui.text("Loaded " + str(settings.recorder.loadedLines)+" Lines of Movement (" + str(max(settings.recorder.playbackDict)/1000) + " Seconds)")
+
+                if settings.recorder.playbackPaused:
+                    clicked_pause = imgui.button('Play', width=70)
+                else:
+                    clicked_pause = imgui.button('Pause', width=70)
+                imgui.same_line(spacing=10)
+                clicked_stop = imgui.button('Stop', width=50)
+                if clicked_pause:
+                    settings.recorder.pauseMovementPlayback()
+                if clicked_stop:
+                    settings.recorder.stopMovementPlayback()
+
         if self.saveDialogEnabled:
             imgui.open_popup("Save recorded "+self.saveMode+"s to file?")
             imgui.set_next_window_size(300, 100)
