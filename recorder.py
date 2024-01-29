@@ -20,9 +20,10 @@ class Recorder():
         self.movementData = None
         self.movementCount = 0
         self.keyCount = 0
-        self.playbackData = {}
+        self.playbackData = None
+        self.playbackDict = None
         self.playingMovement = False
-        self.playbackPaused = False
+        self.playbackPaused = True
 
     def startKeyRecording(self):
         if not self.recordingKeys:
@@ -104,24 +105,30 @@ class Recorder():
     def startMovementPlayback(self, file):
         try:
             with open("recordings/"+file) as csvfile:
+                lines = sum(1 for line in csvfile)-2
+                if lines <= 1:
+                    raise Exception("No Data in CSV")
+                csvfile.seek(0)
+                for _ in range(2):  # skip header
+                    next(csvfile)
                 reader = csv.reader(csvfile)
-                for row in reader:
-                    if row[1] in self.playbackData:
-                        self.playbackData[row[1]].append(row[0])
+                self.playbackDict = {}
+                self.playbackData = np.zeros((lines, 5))
+                for index, row in enumerate(reader):
+                    if row[0] in self.playbackDict:  # if timestamp in dict
+                        self.playbackDict[row[0]].append(index)
                     else:
-                        self.playbackData[row[1]] = [row[0]]
-
-                print(self.playbackData)
+                        self.playbackDict[row[0]] = [index]
+                    self.playbackData[index] = row[1:]
         except Exception as e:
-            print("Error in write_CSV:")
-
-        except Exception as e:
-            print("Error in write_CSV:")
+            print("Error in read CSV:")
             print(e)
-        pass
+        print(lines, "lines of Data loadet")
+        self.playingMovement = True
+        self.playbackPaused = True
 
     def pauseMovementPlayback(self):
-        pass
+        self.playbackPaused = not self.playbackPaused
 
     def stopMovementPlayback(self):
         pass
