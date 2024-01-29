@@ -73,8 +73,8 @@ class GUI():
                         else:
                             clicked_connect, _ = imgui.menu_item("Connect", "ALT + F4")
 
-                        with imgui.begin_menu('Port', True) as open_recent_menu:
-                            if open_recent_menu.opened:
+                        with imgui.begin_menu('Port', True) as open_port_menu:
+                            if open_port_menu.opened:
                                 for port in settings.serialPorts:
                                     if port == settings.serialPort:
                                         clicked, _ = imgui.menu_item(">"+port, None, False, True)
@@ -82,6 +82,12 @@ class GUI():
                                         clicked, _ = imgui.menu_item(port, None, False, True)
                                     if clicked:
                                         settings.serialPort = port
+                        with imgui.begin_menu('Emulate from File', True) as open_emulate_menu:
+                            if open_emulate_menu.opened:
+                                for file in os.listdir("./recordings"):
+                                    clicked, _ = imgui.menu_item(file, None, False, True)
+                                    if clicked:
+                                        settings.recorder.startMovementPlayback(file)
                         if clicked_connect:
                             if settings.gloveConnected:
                                 settings.disconnectGlove()

@@ -1,11 +1,13 @@
 from settings import *
 import settings
 from gui import GUI
+import os
 
 
 class GloveGL:
 
     def __init__(self):
+        print(os.listdir("./recordings"))
         settings.init()
         self.mainScene = Scene()
         self.gui = GUI()

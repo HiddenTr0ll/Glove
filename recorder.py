@@ -1,6 +1,8 @@
 import settings
 from settings import *
 from mido import Message, MetaMessage, MidiFile, MidiTrack
+from os import listdir
+import csv
 
 dataCount = 1000000
 
@@ -18,6 +20,9 @@ class Recorder():
         self.movementData = None
         self.movementCount = 0
         self.keyCount = 0
+        self.playbackData = {}
+        self.playingMovement = False
+        self.playbackPaused = False
 
     def startKeyRecording(self):
         if not self.recordingKeys:
@@ -96,11 +101,30 @@ class Recorder():
                 return 0
             return 1
 
-    def startMovementPlayback(self):
+    def startMovementPlayback(self, file):
+        try:
+            with open("recordings/"+file) as csvfile:
+                reader = csv.reader(csvfile)
+                for row in reader:
+                    if row[1] in self.playbackData:
+                        self.playbackData[row[1]].append(row[0])
+                    else:
+                        self.playbackData[row[1]] = [row[0]]
+
+                print(self.playbackData)
+        except Exception as e:
+            print("Error in write_CSV:")
+
+        except Exception as e:
+            print("Error in write_CSV:")
+            print(e)
         pass
 
     def pauseMovementPlayback(self):
         pass
 
-    def stopmovementPlayback(self):
+    def stopMovementPlayback(self):
+        pass
+
+    def getMovementFiles(self):
         pass
