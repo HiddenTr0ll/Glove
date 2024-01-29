@@ -74,17 +74,17 @@ class Recorder():
             print("\nwriting to file...")
 
             if True:
-                dataToWrite = [[int(d[0]), int(round(d[1])), d[2], d[3], d[4], d[5]]for d in self.movementData]
+                dataToWrite = [[int(round(d[1])), int(d[0]), d[2], d[3], d[4], d[5]]for d in self.movementData]
             else:
-                dataToWrite = [[int(d[0]), int(round(d[1])), d[2], d[3], d[4], d[5], d[6], d[7], d[8]] for d in self.movementData]
+                dataToWrite = [[int(round(d[1])), int(d[0]), d[2], d[3], d[4], d[5], d[6], d[7], d[8]] for d in self.movementData]
 
             try:
-                with open(filename, "w") as csvfile:
-                    csvfile.write("Sensors: lowerArm (0), thumb (1), index (2), mid (3), ring (4), pinky (5), palm (6)")
+                with open("recordings/"+filename+'.csv', "w") as csvfile:
+                    csvfile.write("Sensors: lowerArm (0), thumb (1), index (2), mid (3), ring (4), pinky (5), palm (6)\n")
                     if True:
-                        csvfile.write("Sensor, Tick, QuatI, QuatJ, QuatK, QuatSum")
+                        csvfile.write("Tick, Sensor, QuatI, QuatJ, QuatK, QuatSum\n")
                     else:
-                        csvfile.write("Sensor, Tick, QuatI, QuatJ, QuatK, QuatSum, AccX, AccY, AccZ")
+                        csvfile.write("Sensor, Tick, QuatI, QuatJ, QuatK, QuatSum, AccX, AccY, AccZ\n")
 
                     csv_writer = csv.writer(csvfile,
                                             delimiter=",",
