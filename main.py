@@ -77,8 +77,8 @@ class GloveGL:
         if combo in self.moveLookup:
             directionModifier = self.moveLookup[combo]
             dPos = [
-                self.frameTime / 16.7 * np.cos(np.deg2rad(settings.camTheta+directionModifier)),
-                self.frameTime / 16.7 * np.sin(np.deg2rad(settings.camTheta+directionModifier)),
+                settings.movementSpeedH * self.frameTime / 16.7 * np.cos(np.deg2rad(settings.camTheta+directionModifier)),
+                settings.movementSpeedH * self.frameTime / 16.7 * np.sin(np.deg2rad(settings.camTheta+directionModifier)),
                 0
             ]
             self.mainScene.moveCamera(dPos)
@@ -86,14 +86,14 @@ class GloveGL:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * 0.7
+                self.frameTime/16.7 * 0.7 * settings.movementSpeedV
             ]
             self.mainScene.moveCamera(dPos)
         if glfw.get_key(settings.window, GLFW_CONSTANTS.GLFW_KEY_Q) == GLFW_CONSTANTS.GLFW_PRESS:
             dPos = [
                 0,
                 0,
-                self.frameTime/16.7 * -0.7
+                self.frameTime/16.7 * -0.7 * settings.movementSpeedV
             ]
             self.mainScene.moveCamera(dPos)
 
@@ -152,7 +152,7 @@ class GloveGL:
 
     def handleMouse(self):
         (x, y) = glfw.get_cursor_pos(settings.window)
-        rate = self.frameTime/16.7
+        rate = self.frameTime/16.7*settings.mouseSensitivity*0.1
         thetaInc = rate * ((SCREEN_WIDTH/2)-x)
         phyInc = rate * ((SCREEN_HEIGHT/2)-y)
         self.mainScene.spinCamera(thetaInc, phyInc)

@@ -34,6 +34,15 @@ FONT_PATH = None  # "path/to/font.ttf"
 FONT_SCALING_FACTOR = 0.7
 
 
+mouseSensitivity = 1
+movementSpeedH = 1
+movementSpeedV = 1
+
+camPos = np.array([60, 15, 20], dtype=np.float32)
+camTheta = 150
+camPhi = -20
+
+
 def init():
 
     global running
@@ -58,15 +67,6 @@ def init():
 
     global impl
     impl = GlfwRenderer(window)
-
-    global camPos
-    camPos = np.array([60, 15, 20], dtype=np.float32)
-
-    global camTheta
-    camTheta = 150
-
-    global camPhi
-    camPhi = -20
 
     global font
     io = imgui.get_io()

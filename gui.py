@@ -97,6 +97,16 @@ class GUI():
                             if label == "audioOn":
                                 if enabled:
                                     settings.audioOn = True
+                        changed, values = imgui.drag_float2("Movementspeed Horizontal, Vertical", settings.movementSpeedH,
+                                                            settings.movementSpeedV, change_speed=0.01, min_value=0.1, max_value=2, format="%.1f")
+                        if changed:
+                            settings.movementSpeedH = values[0]
+                            settings.movementSpeedV = values[1]
+
+                        changed, values = imgui.drag_float("Mouse Sensitivity", settings.mouseSensitivity, change_speed=0.01, min_value=0.1, max_value=2, format="%.1f")
+                        if changed:
+                            settings.mouseSensitivity = values
+
         if self.settings["debug"]:
 
             with imgui.begin("Debug", flags=(imgui.WINDOW_ALWAYS_AUTO_RESIZE+imgui.WINDOW_NO_COLLAPSE)):
