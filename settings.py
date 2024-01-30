@@ -165,7 +165,7 @@ def create_shader_program(vertex_filepath: str, fragment_filepath: str) -> int:
     vertex_module = create_shader_module(vertex_filepath, GL_VERTEX_SHADER)
     fragment_module = create_shader_module(fragment_filepath, GL_FRAGMENT_SHADER)
 
-    if platform.system() == "Darwin":
+    if sys.platform.startswith('darwin'):
         shader = compileProgram(vertex_module, fragment_module, validate=False)
     else:
         shader = compileProgram(vertex_module, fragment_module)
