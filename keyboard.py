@@ -33,13 +33,15 @@ class Keyboard():
     def initAudio(self):
         if self.fs is None:
             try:
-                import fluidsynth
+                import fluidsynth  # pip install pyFluidSynth
                 self.fs = fluidsynth.Synth(samplerate=44100.0)
                 self.fs.start()
                 self.sfid = self.fs.sfload("soundfonts/concertPiano.sf2")  # for ex. https://musical-artifacts.com/artifacts/3212
                 self.fs.program_select(0, self.sfid, 0, 0)
             except:
-                print("install fluidsynth for audio")
+                print("install fluidsynth and download soundfont to /soundfonts")
+                print("fluidsynth: pip install pyFluidSynth")
+                print("soundfont example: https://musical-artifacts.com/artifacts/3212")
                 settings.audioOn = False
 
     def update(self, rate):
