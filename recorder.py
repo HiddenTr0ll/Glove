@@ -29,6 +29,8 @@ class Recorder():
         self.playingMovement = False
         self.playbackPaused = True
         self.loadedLines = 0
+        self.playbackProgress = None
+        self.lastMovement = None
 
     def startKeyRecording(self):
         if not self.recordingKeys:
@@ -131,41 +133,52 @@ class Recorder():
             print(e)
         print(self.loadedLines, "lines of Data loadet")
         self.playingMovement = True
-        self.playbackPaused = False
-        self.playbackTimeOffset = glfw.get_time()
-        print(self.playbackTimeOffset)
-
-        previous(self.playbackDict, 18231)
+        self.playbackPaused = True
+        self.playbackProgress = 0
+        self.lastMovement = glfw.get_time()
+        self.emulateMovement(True)
 
     def pauseMovementPlayback(self):
         self.playbackPaused = not self.playbackPaused
-        if self.playbackPaused:
-            glfw.get_time * 1000
+        if not self.playbackPaused:
+            # self.playbackTimeOffset = glfw.get_time() - self.playbackProgress
+            self.lastMovement = glfw.get_time()
 
     def stopMovementPlayback(self):
         self.playbackData = None
         self.playingMovement = False
         self.playbackPaused = True
 
-    def updateMovement(self):
-        if not self.playbackPaused:
-            currentTick = (glfw.get_time() - self.playbackTimeOffset)*1000
+    def setPlaybackProgress(self, progress):
+        self.playbackProgress = progress
+        self.lastMovement = glfw.get_time()
+        pass
 
+    def emulateMovement(self, forced):
+        if not self.playbackPaused or forced:
+            currentTick = 1000 * self.playbackProgress
             # check if playback is over
-            if max(settings.recorder.playbackDict) < currentTick:
+            if max(self.playbackDict) < currentTick:
                 self.playbackPaused = True
 
-            closestTick = closest(self.playbackDict, currentTick)
+            closestTick = closestKey(self.playbackDict, currentTick)
             for index in self.playbackDict[closestTick]:
                 settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
 
-            if closestTick > 0:
-                previousTick = previous(self.playbackDict, closestTick)
-                for index in self.playbackDict[previousTick]:
-                    settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
+            if closestTick > 0:  # if there is a previous tick
+                neighbourTick = previousKey(self.playbackDict, closestTick)
+            else:
+                neighbourTick = nextKey(self.playbackDict, closestTick)
+            for index in self.playbackDict[neighbourTick]:
+                settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
+
+            currentTime = glfw.get_time()
+            delta = currentTime - self.lastMovement
+            self.playbackProgress = self.playbackProgress+delta
+            self.lastMovement = currentTime
 
 
-def closest(sorted_dict, target):
+def closestKey(sorted_dict, target):
     # only element 0 of part of dict from min -> end
     keys = list(islice(sorted_dict.irange(minimum=target), 1))
     keys.extend(islice(sorted_dict.irange(maximum=target, reverse=True), 1))
@@ -173,5 +186,9 @@ def closest(sorted_dict, target):
     return min(keys, key=lambda k: abs(target - k))
 
 
-def previous(sorted_dict, target):
+def previousKey(sorted_dict, target):
     return list(islice(sorted_dict.irange(maximum=target, reverse=True), 2))[1]
+
+
+def nextKey(sorted_dict, target):
+    return list(islice(sorted_dict.irange(minimum=target), 2))[1]

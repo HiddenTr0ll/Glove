@@ -40,7 +40,14 @@ class GUI():
         if settings.recorder.playingMovement:
             with imgui.begin("Playback Control", flags=(imgui.WINDOW_NO_RESIZE+imgui.WINDOW_NO_COLLAPSE+imgui.WINDOW_ALWAYS_AUTO_RESIZE)):
                 imgui.text("Loaded " + str(settings.recorder.loadedLines)+" Lines of Movement (" + str(max(settings.recorder.playbackDict)/1000) + " Seconds)")
-
+                changed, value = imgui.slider_float("Progress",
+                                                    settings.recorder.playbackProgress,
+                                                    min_value=0.0,
+                                                    max_value=max(settings.recorder.playbackDict)/1000,
+                                                    format="%.1f")
+                if changed:
+                    settings.recorder.setPlaybackProgress(value)
+                    settings.recorder.emulateMovement(True)
                 if settings.recorder.playbackPaused:
                     clicked_pause = imgui.button('Play', width=70)
                 else:
@@ -141,13 +148,21 @@ class GUI():
                             if label == "audioOn":
                                 if enabled:
                                     settings.audioOn = True
-                        changed, values = imgui.drag_float2("Movementspeed Horizontal, Vertical", settings.movementSpeedH,
-                                                            settings.movementSpeedV, change_speed=0.01, min_value=0.1, max_value=2, format="%.1f")
+                        changed, values = imgui.slider_float2("Movementspeed Horizontal, Vertical",
+                                                              settings.movementSpeedH,
+                                                              settings.movementSpeedV,
+                                                              min_value=0.1,
+                                                              max_value=2,
+                                                              format="%.1f")
                         if changed:
                             settings.movementSpeedH = values[0]
                             settings.movementSpeedV = values[1]
 
-                        changed, values = imgui.drag_float("Mouse Sensitivity", settings.mouseSensitivity, change_speed=0.01, min_value=0.1, max_value=2, format="%.1f")
+                        changed, values = imgui.slider_float("Mouse Sensitivity",
+                                                             settings.mouseSensitivity,
+                                                             min_value=0.1,
+                                                             max_value=2,
+                                                             format="%.1f")
                         if changed:
                             settings.mouseSensitivity = values
 
