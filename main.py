@@ -41,7 +41,8 @@ class GloveGL:
 
     def run(self):
         while not glfw.window_should_close(settings.window) and settings.running:
-            self.handleKeys()               # handle key inputs
+            if not self.gui.saveDialogEnabled:
+                self.handleKeys()               # handle key inputs
             self.handleEvents()             # check if events should be triggered by key inputs
             if not self.gui.menuEnabled:
                 self.handleMouse()
