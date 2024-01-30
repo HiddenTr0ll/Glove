@@ -3,6 +3,8 @@ from settings import *
 from mido import Message, MetaMessage, MidiFile, MidiTrack
 from os import listdir
 import csv
+from itertools import islice
+from sortedcontainers import SortedDict
 
 dataCount = 1000000
 
@@ -22,6 +24,7 @@ class Recorder():
         self.keyCount = 0
         self.playbackData = None
         self.playbackDict = None
+        self.playbackTime = None
         self.playingMovement = False
         self.playbackPaused = True
         self.loadedLines = 0
@@ -114,7 +117,7 @@ class Recorder():
                 for _ in range(2):  # skip header
                     next(csvfile)
                 reader = csv.reader(csvfile)
-                self.playbackDict = {}
+                self.playbackDict = SortedDict()
                 self.playbackData = np.zeros((self.loadedLines, 5))
                 for index, row in enumerate(reader):
                     if int(row[0]) in self.playbackDict:  # if timestamp in dict
@@ -127,10 +130,14 @@ class Recorder():
             print(e)
         print(self.loadedLines, "lines of Data loadet")
         self.playingMovement = True
-        self.playbackPaused = True
+        self.playbackPaused = False
+        self.playbackTimeOffset = glfw.get_time()
+        print(self.playbackTimeOffset)
 
     def pauseMovementPlayback(self):
         self.playbackPaused = not self.playbackPaused
+        if self.playbackPaused:
+            glfw.get_time * 1000
 
     def stopMovementPlayback(self):
         self.playbackData = None
@@ -139,5 +146,22 @@ class Recorder():
 
     def updateMovement(self):
         if not self.playbackPaused:
-            pass
-            # TODO implement rotationlist updates here
+            currentTick = (glfw.get_time() - self.playbackTimeOffset)*1000
+            closestTick = closest(self.playbackDict, currentTick)
+            if max(settings.recorder.playbackDict) < currentTick:
+                self.playbackPaused = True
+            print("current: ", currentTick)
+            print("closest: ", closestTick)
+            for id in self.playbackDict[closestTick]:
+                print("id: ", id)
+                # settings.rotationList[id] = pyrr.matrix44.create_from_quaternion()
+
+        # TODO implement rotationlist updates here
+
+
+def closest(sorted_dict, target):
+    # only element 0 of part of dict from min -> end
+    keys = list(islice(sorted_dict.irange(minimum=target), 1))
+    keys.extend(islice(sorted_dict.irange(maximum=target, reverse=True), 1))
+    # key(k)=abs(target - k) -> select value with the minimum difference to target
+    return min(keys, key=lambda k: abs(target - k))
