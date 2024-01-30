@@ -5,6 +5,7 @@ from os import listdir
 import csv
 from itertools import islice
 from sortedcontainers import SortedDict
+import pyrr
 
 dataCount = 1000000
 
@@ -134,6 +135,8 @@ class Recorder():
         self.playbackTimeOffset = glfw.get_time()
         print(self.playbackTimeOffset)
 
+        previous(self.playbackDict, 18231)
+
     def pauseMovementPlayback(self):
         self.playbackPaused = not self.playbackPaused
         if self.playbackPaused:
@@ -147,16 +150,19 @@ class Recorder():
     def updateMovement(self):
         if not self.playbackPaused:
             currentTick = (glfw.get_time() - self.playbackTimeOffset)*1000
-            closestTick = closest(self.playbackDict, currentTick)
+
+            # check if playback is over
             if max(settings.recorder.playbackDict) < currentTick:
                 self.playbackPaused = True
-            print("current: ", currentTick)
-            print("closest: ", closestTick)
-            for id in self.playbackDict[closestTick]:
-                print("id: ", id)
-                # settings.rotationList[id] = pyrr.matrix44.create_from_quaternion()
 
-        # TODO implement rotationlist updates here
+            closestTick = closest(self.playbackDict, currentTick)
+            for index in self.playbackDict[closestTick]:
+                settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
+
+            if closestTick > 0:
+                previousTick = previous(self.playbackDict, closestTick)
+                for index in self.playbackDict[previousTick]:
+                    settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
 
 
 def closest(sorted_dict, target):
@@ -165,3 +171,7 @@ def closest(sorted_dict, target):
     keys.extend(islice(sorted_dict.irange(maximum=target, reverse=True), 1))
     # key(k)=abs(target - k) -> select value with the minimum difference to target
     return min(keys, key=lambda k: abs(target - k))
+
+
+def previous(sorted_dict, target):
+    return list(islice(sorted_dict.irange(maximum=target, reverse=True), 2))[1]
