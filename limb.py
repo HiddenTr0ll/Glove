@@ -1,4 +1,5 @@
 from cuboid import *
+import settings
 
 
 class Limb(Cuboid):
@@ -20,30 +21,9 @@ class Limb(Cuboid):
         delta = np.dot(np.array([offsetX, 0, offsetZ], dtype=np.float32), palmRotation[:3, :3])
         self.position = palmTip + delta
 
-    def overlapsWith(self, cubeList: list[Cuboid]):
-        self.calculateTip()
-        overlapping = []
-        for index, cube in enumerate(cubeList):
-            # x
-            if (self.tipPosition[0]+self.l/2) < (cube.position[0]-cube.l/2):
-                continue
-
-            if (self.tipPosition[0]-self.l/2) > (cube.position[0]+cube.l/2):
-                continue
-
-            # y
-            if (self.tipPosition[1]) < (cube.position[1]-cube.h):
-                continue
-
-            if (self.tipPosition[1]-2) > (cube.position[1]):
-                continue
-
-            # z
-            if (self.tipPosition[2]-self.w/2) > (cube.position[2]+cube.w/2):
-                continue
-
-            if (self.tipPosition[2]+self.w/2) < (cube.position[2]+cube.w/2):
-                continue
-
-            overlapping.append(index)
-        return overlapping
+    def draw(self):
+        glBindVertexArray(self.vao)
+        glUniformMatrix4fv(
+            settings.modelMatrixLocation, 1, GL_FALSE,
+            self.get_model_transform())
+        glDrawArrays(GL_TRIANGLES, 0, self.vertexCount)

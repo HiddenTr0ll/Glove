@@ -47,9 +47,6 @@ class Scene:
 
     def update(self, rate):
         # TODO: update arm and finger rotations/positions
-        # settings.arm1.finger1.update(rate)
-        # settings.arm1.finger2.update(rate)
-        # settings.arm1.spin(rate)
 
         overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.keys)
         self.keyboard.updatePressed(set(overlap))
@@ -74,5 +71,7 @@ class Scene:
         self.keyboard.draw()
 
     def quit(self):
-        glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
-        glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])
+        # TODO arm.destroy
+        # glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
+        # glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])
+        pass

@@ -4,6 +4,7 @@ from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
 from limb import *
 import pyrr
+from finger import *
 
 
 class Arm():
@@ -23,18 +24,19 @@ class Arm():
             -7.5, 0.0, 0.0, 0.0, 0.0       # y-offset thumb
         )
         self.limbs = [Limb(
+            l=self.measurements[0*3],
+            w=self.measurements[0*3+1],
+            h=self.measurements[0*3+2])
+        ]+[Finger(
             l=self.measurements[i*3],
             w=self.measurements[i*3+1],
-            h=self.measurements[i*3+2]
-        ) for i in range(7)]
+            h=self.measurements[i*3+2]) for i in range(1, 6)
+           ]+[Limb(
+               l=self.measurements[6*3],
+               w=self.measurements[6*3+1],
+               h=self.measurements[6*3+2])]
 
         self.rotationList = settings.rotationList
-        self.update()
-
-    def spin(self, rate):
-        for limb in self.limbs:
-            limb.update(rate)
-        self.needsUpdate = True
         self.update()
 
     def update(self):
@@ -43,29 +45,28 @@ class Arm():
         # all: OR combination of all truth values
         # if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]):
         self.rotationList = settings.rotationList
-        self.updateAngles()
+        self.updateRotations()
         self.updatePositions()
 
-    def updateAngles(self):
-        for index, limb in enumerate(self.limbs):
-            limb.updateRotation(self.rotationList[index])
+    def updateRotations(self):
+        self.limbs[0].updateRotation(self.rotationList[0])
+        self.limbs[6].updateRotation(self.rotationList[6])
+        for i in range(1, 6):  # update rotation and provide palm rotation
+            self.limbs[i].updateTipRotation(self.rotationList[i], self.limbs[6].rotation)
 
     def updatePositions(self):
         self.limbs[0].calculateTip()
         self.limbs[6].updatePosition(self.limbs[0].tipPosition)
         self.limbs[6].calculateTip()
         for i in range(1, 6):
-            self.limbs[i].updatePositionWithOffset(
+            self.limbs[i].updatePosition(
                 self.limbs[6].tipPosition,
                 self.limbs[6].rotation,
                 self.offsets[i-1],
                 self.offsets[i+4])
+            # tip position gets calculatet automatically
 
     def draw(self):
         settings.texture.use()
         for limb in self.limbs:
-            glBindVertexArray(limb.vao)
-            glUniformMatrix4fv(
-                settings.modelMatrixLocation, 1, GL_FALSE,
-                limb.get_model_transform())
-            glDrawArrays(GL_TRIANGLES, 0, limb.vertexCount)
+            limb.draw()
