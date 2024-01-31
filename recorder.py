@@ -25,7 +25,6 @@ class Recorder():
         self.keyCount = 0
         self.playbackData = None
         self.playbackDict = None
-        self.playbackTime = None
         self.playingMovement = False
         self.playbackPaused = True
         self.loadedLines = 0
@@ -141,7 +140,6 @@ class Recorder():
     def pauseMovementPlayback(self):
         self.playbackPaused = not self.playbackPaused
         if not self.playbackPaused:
-            # self.playbackTimeOffset = glfw.get_time() - self.playbackProgress
             self.lastMovement = glfw.get_time()
 
     def stopMovementPlayback(self):
