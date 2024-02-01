@@ -258,15 +258,15 @@ def gloveLoop(port):
                         # rotating to match real world orientation
                         if ID == 6:  # palm
                             imuQ = R.from_quat([quatV[0], -quatV[2], quatV[1], -quatW[0]])
-                            imuQ = imuQ * R.from_euler("xyz", [90, -90, 0], degrees=True)
+                            imuQ = imuQ * R.from_euler("xyz", [90, 0, 0], degrees=True)
 
                         elif ID == 0:  # lower arm
-                            imuQ = R.from_quat([quatV[0], quatV[2], -quatV[1], -quatW[0]])
+                            imuQ = R.from_quat([-quatV[0], -quatV[2], -quatV[1], -quatW[0]])
 
-                            imuQ = imuQ * R.from_euler("xyz", [-90, 90, 0], degrees=True)
-                        else:
-                            imuQ = R.from_quat([quatV[1], -quatV[2], quatV[0], quatW[0]])
-                            imuQ = imuQ * R.from_euler("xyz", [-90, 180, 0], degrees=True)
+                            imuQ = imuQ * R.from_euler("xyz", [90, 180, 0], degrees=True)
+                        else:  # finger
+                            imuQ = R.from_quat([quatV[1], -quatV[2], -quatV[0], -quatW[0]])
+                            imuQ = imuQ * R.from_euler("xyz", [90, 90, 0], degrees=True)
 
                         #######################################################################################
                         settings.recorder.recordMovement([ID, ts, *imuQ.as_quat(), 0, 0, 0])
