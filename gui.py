@@ -166,6 +166,22 @@ class GUI():
                         if changed:
                             settings.mouseSensitivity = values
 
+                        changed, values = imgui.slider_float("Rotation",
+                                                             settings.testRotation,
+                                                             min_value=-360,
+                                                             max_value=360,
+                                                             format="%.1f")
+                        if changed:
+                            settings.testRotation = values
+
+                        changed, values = imgui.slider_float("Rotation2",
+                                                             settings.testRotation2,
+                                                             min_value=-360,
+                                                             max_value=360,
+                                                             format="%.1f")
+                        if changed:
+                            settings.testRotation2 = values
+
         if self.settings["debug"]:
 
             with imgui.begin("Debug", flags=(imgui.WINDOW_ALWAYS_AUTO_RESIZE+imgui.WINDOW_NO_COLLAPSE)):
@@ -173,6 +189,8 @@ class GUI():
                 imgui.text("CamPos: " + np.array2string(settings.camPos, precision=2))
                 imgui.text("CamTheta: " + str(settings.camTheta))
                 imgui.text("CamPhi: " + str(settings.camPhi))
+                imgui.text("finger0xRotation: " + str(settings.testRotation))
+                imgui.text("finger1xRotation: " + str(settings.testRotation2))
 
         # turn examples on/off
         with imgui.begin("self.active examples"):

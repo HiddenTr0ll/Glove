@@ -30,7 +30,8 @@ class Arm():
         ]+[Finger(
             l=self.measurements[i*3],
             w=self.measurements[i*3+1],
-            h=self.measurements[i*3+2]) for i in range(1, 6)
+            h=self.measurements[i*3+2],
+            fingerIndex=i-1) for i in range(1, 6)
            ]+[Limb(
                l=self.measurements[6*3],
                w=self.measurements[6*3+1],
@@ -52,7 +53,7 @@ class Arm():
         self.limbs[0].updateRotation(self.rotationList[0])
         self.limbs[6].updateRotation(self.rotationList[6])
         for i in range(1, 6):  # update rotation and provide palm rotation
-            self.limbs[i].updateTipRotation(self.rotationList[i], self.limbs[6].rotation)
+            self.limbs[i].updateRotation(self.rotationList[i], self.limbs[6].rotation)
 
     def updatePositions(self):
         self.limbs[0].calculateTip()

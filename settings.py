@@ -48,13 +48,18 @@ def init():
     movementSpeedV = 1
 
     global camPos
-    camPos = np.array([60, 15, 20], dtype=np.float32)
+    camPos = np.array([20, -10, 45], dtype=np.float32)
 
     global camTheta
     camTheta = 150
 
     global camPhi
     camPhi = -20
+
+    global testRotation
+    testRotation = 0
+    global testRotation2
+    testRotation2 = 0
 
     global serialPorts
     serialPorts = serial_ports()
