@@ -6,10 +6,6 @@ from limb import *
 import pyrr
 
 
-fingerAdjust1 = pyrr.Quaternion.from_x_rotation(np.deg2rad(0.33333*360))
-fingerAdjust2 = pyrr.Quaternion.from_x_rotation(np.deg2rad(0.66666*360))
-
-
 class Finger():
     def __init__(self, l, w, h, fingerIndex):
         self.fingerIndex = fingerIndex
@@ -56,14 +52,41 @@ class Finger():
         if (swing.w < 0):
             swing = - swing
 
-        if self.fingerIndex != 0:  # normal fingers
-            finger1 = identityQuat.slerp(swing, 0.33333) * twist * palmQuat
-            finger2 = identityQuat.slerp(swing, 0.66666) * twist * palmQuat
+        x = swing.x
 
-            # slerp flips at some point because of shortest path calculation
-            if swing.x < -0.35:  # -> rotate to take the long path again
-                finger1 = fingerAdjust1 * finger1  # fingerAdjust1 = 1/3*360°
-                finger2 = fingerAdjust2 * finger2  # fingerAdjust2 = 2/3*360°
+        if self.fingerIndex != 0:  # normal fingers
+            if (x < 0) and (swing.w < 0.85):
+                x = 2 + x  # 1 loops back to -1 -> -0.95 treated as 1.05
+
+            # Base joint
+            # Calculated from
+            # -0.0978 -6.4
+            #  0       0
+            #  0.4254  16.5
+            #  0.6992  26.7
+            #  0.9377  36.9
+            #  1       42
+            #  1.0746  54.7
+
+            # Middle joint
+            # Calculated from
+            # -0.0978 -6.4
+            #  0       0
+            #  0.4254  31.8
+            #  0.6992  64.9
+            #  0.9377  103
+            #  1       128.5
+            #  1.0746  174.9
+
+            if x < -0.0978:
+                rotationFactor0 = -6.4
+                rotationFactor1 = -6.4
+            elif x > 1.0746:
+                rotationFactor0 = 54.7
+                rotationFactor1 = 174.9
+            else:
+                rotationFactor0 = 333.3632*(x**5) - 709.3019*(x**4) + 502.5615*(x**3) - 131.4539*(x**2) + 47.3223*x + 0.0152
+                rotationFactor1 = 1088.3399*(x**5) - 2175.6519*(x**4) + 1348.4485*(x**3) - 167.0168*(x**2) + 33.7798*x - 0.0186
 
         else:  # Thumb
             # First joint more range of motion
@@ -84,8 +107,6 @@ class Finger():
             #  0.7985  54.7
             #  0.8882  70.0
 
-            x = swing.x
-
             if x < -0.5255:
                 rotationFactor0 = -52.2
                 rotationFactor1 = -44.5
@@ -96,11 +117,11 @@ class Finger():
                 rotationFactor0 = 78.1614*(x**5) - 14.0924*(x**4) - 74.386*(x**3) - 5.8935*(x**2) + 60.7599*x - 25.2309
                 rotationFactor1 = 242.2745*(x**5) - 253.0118*(x**4) - 35.9509*(x**3) + 106.6655*(x**2) + 59.9504*x - 18.6655
 
-            finger1 = pyrr.Quaternion.from_x_rotation(np.deg2rad(rotationFactor0)) * twist * palmQuat
-            finger2 = pyrr.Quaternion.from_x_rotation(np.deg2rad(rotationFactor1)) * twist * palmQuat
+        finger0 = pyrr.Quaternion.from_x_rotation(np.deg2rad(rotationFactor0)) * twist * palmQuat
+        finger1 = pyrr.Quaternion.from_x_rotation(np.deg2rad(rotationFactor1)) * twist * palmQuat
 
-        self.phalanges[0].rotation = pyrr.matrix44.create_from_quaternion(finger1)
-        self.phalanges[1].rotation = pyrr.matrix44.create_from_quaternion(finger2)
+        self.phalanges[0].rotation = pyrr.matrix44.create_from_quaternion(finger0)
+        self.phalanges[1].rotation = pyrr.matrix44.create_from_quaternion(finger1)
 
     def seperateSwingTwist(self, toSeperate: pyrr.Quaternion):
         swing = pyrr.Quaternion(np.array([toSeperate.x, 0, 0, toSeperate.w]))
