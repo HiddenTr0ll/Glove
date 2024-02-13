@@ -108,7 +108,7 @@ def isPacketValid(mode, deviceId, packetId):
         return False
     if deviceId == 0 and packetId > 1:
         return False
-    if mode == 1 and packetId > 2:
+    if mode == 0 and packetId > 2:
         return False
     return True
 

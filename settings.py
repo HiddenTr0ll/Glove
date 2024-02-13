@@ -114,10 +114,8 @@ def init():
     global blackT
     blackT = Material("gfx/black.jpg")
 
-    glClearColor(0.1, 0.2, 0.4, 1.0)
-
     global shader
-    shader = create_shader_program("shaders/vertex.txt", "shaders/fragment.txt")
+    shader = create_shader_program("shaders/vertex.glsl", "shaders/fragment.glsl")
     glUseProgram(shader)
     glUniform1i(glGetUniformLocation(shader, "imageTexture"), 0)
 
@@ -158,6 +156,8 @@ def initGLFW():
         GLFW_CONSTANTS.GLFW_CURSOR,
         GLFW_CONSTANTS.GLFW_CURSOR_HIDDEN
     )
+    glClearColor(0.1, 0.2, 0.4, 1.0)
+
     return window
 
 

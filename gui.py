@@ -367,8 +367,6 @@ class GUI():
         settings.impl.process_inputs()
         imgui.new_frame()
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
         if settings.font is not None:
             imgui.push_font(settings.font)
         self.frame_commands()

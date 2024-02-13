@@ -51,6 +51,8 @@ class GloveGL:
 
             glfw.poll_events()
 
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
             self.gui.render()
 
             # 1 frame every 16.7ms -> 60fps
