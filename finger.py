@@ -173,3 +173,7 @@ class Finger():
         settings.texture.use()
         for phalanx in self.phalanges:
             phalanx.draw()
+
+    def destroy(self):
+        for phalanx in self.phalanges:
+            phalanx.destroy()

@@ -75,3 +75,7 @@ class Keyboard():
             self.keys[keyIndex].release()
             if (settings.audioOn):
                 self.fs.noteoff(0, keyIndex)
+
+    def destroy(self):
+        for key in self.keys:
+            key.destroy()

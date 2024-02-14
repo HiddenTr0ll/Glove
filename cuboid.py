@@ -80,11 +80,13 @@ class Cuboid():
         # vertexArrayPointer format:
         # index, size, type, legacy, stride (2x3x4 Byte), offset
 
-        glEnableVertexAttribArray(0)  # position
+        # position
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 20, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
 
-        glEnableVertexAttribArray(1)  # texcoord
+        # texcoord
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, ctypes.c_void_p(12))
+        glEnableVertexAttribArray(1)
 
     def updateRotation(self, rotation):
         self.rotation = rotation
@@ -111,3 +113,7 @@ class Cuboid():
                 vec=np.array(self.position), dtype=np.float32
             )
         )
+
+    def destroy(self):
+        glDeleteBuffers(1, (self.vbo,))
+        glDeleteVertexArrays(1, (self.vao,))

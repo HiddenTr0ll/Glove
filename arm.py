@@ -71,3 +71,7 @@ class Arm():
         settings.texture.use()
         for limb in self.limbs:
             limb.draw()
+
+    def destroy(self):
+        for limb in self.limbs:
+            limb.destroy()

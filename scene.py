@@ -71,7 +71,5 @@ class Scene:
         self.keyboard.draw()
 
     def quit(self):
-        # TODO arm.destroy
-        # glDeleteVertexArrays(len(self.arm1.limbs), [o.vao for o in self.arm1.limbs])
-        # glDeleteVertexArrays(len(self.keyboard.keys), [o.vao for o in self.keyboard.keys])
-        pass
+        self.arm1.destroy()
+        self.keyboard.destroy()
