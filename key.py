@@ -2,22 +2,18 @@ from cuboid import *
 
 
 class Key(Cuboid):
-    def __init__(self, position, color):
+    def __init__(self, position, color, l, w, h):
         self.isPressed = False
         self.position = position
         self.color = color
+        self.l = l
+        self.w = w
+        self.h = h
         self.eulers = np.array([90, 0, 180], dtype=np.float32)
         self.rotation = pyrr.matrix44.create_from_eulers(
             eulers=np.radians(self.eulers),
             dtype=np.float32)
-        if (color == "white"):
-            self.l = 2.0
-            self.w = 2.0
-            self.h = 15.0
-        elif (color == "black"):
-            self.l = 1.0
-            self.w = 1.0
-            self.h = 9.0
+
         super().__init__()
 
     def press(self):

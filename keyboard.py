@@ -7,6 +7,16 @@ from key import *
 import time
 
 OCTAVES = 3
+KEYWIDTHWHITE = 2.22
+KEYHEIGHTWHITE = 2
+KEYLENGTHWHITE = 13.5
+
+KEYWIDTHBLACK = 1.1
+KEYHEIGHTBLACK = 1
+KEYLENGTHBLACK = 8.5
+
+KEYSPACING = 2.36
+KEYHEIGHTOFFSET = 1
 
 
 class Keyboard():
@@ -25,10 +35,11 @@ class Keyboard():
             position = 0
             for j in range(12):
                 if j in [0, 2, 4, 5, 7, 9, 11]:  # whitekeys
-                    self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2, 0, 0], dtype=np.float32), "white"))
+                    self.keys.append(Key(self.position+np.array([i*7*KEYSPACING + position * KEYSPACING, 0, 0], dtype=np.float32), "white", KEYWIDTHWHITE, KEYHEIGHTWHITE, KEYLENGTHWHITE))
                     position += 1
                 else:
-                    self.keys.append(Key(self.position+np.array([i*7*2.2 + position * 2.2 - 1.1, 0, 1.5], dtype=np.float32), "black"))
+                    self.keys.append(Key(self.position+np.array([i*7*KEYSPACING + position * KEYSPACING - KEYSPACING/2, 0,
+                                     (KEYHEIGHTWHITE+KEYHEIGHTBLACK)/2], dtype=np.float32), "black", KEYWIDTHBLACK, KEYHEIGHTBLACK, KEYLENGTHBLACK))
 
     def initAudio(self):
         if self.fs is None:
