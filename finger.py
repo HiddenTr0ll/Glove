@@ -4,6 +4,7 @@ from OpenGL.GL import *  # noqa: F403
 from OpenGL.GLUT import *  # noqa: F403
 from limb import *
 import pyrr
+import math
 
 
 class Finger():
@@ -139,7 +140,15 @@ class Finger():
         self.phalanges[1].calculateTip()
         self.phalanges[2].position = self.phalanges[1].tipPosition
         self.phalanges[2].calculateTip()
-        self.tipPosition = self.phalanges[2].tipPosition + settings.armPos
+        # calculate absolute tip with offset from origin and rotation
+        x = self.phalanges[2].tipPosition[0]
+        y = self.phalanges[2].tipPosition[1]
+        z = self.phalanges[2].tipPosition[2]
+        cos = math.cos(settings.armAngle)
+        sin = math.sin(settings.armAngle)
+        delta_x = x * cos + y * sin
+        delta_y = -x * sin + y * cos
+        self.tipPosition = np.array([delta_x, delta_y, z]) + settings.armPos
 
     def overlapsWith(self, cubeList: list[Cuboid]):
         overlapping = []

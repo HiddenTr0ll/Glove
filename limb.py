@@ -42,7 +42,7 @@ class Limb(Cuboid):
         model_transform = pyrr.matrix44.multiply(
             m1=model_transform,
             m2=pyrr.matrix44.create_from_axis_rotation(
-                axis=np.array([0, 0, 1]), theta=settings.armAngle, dtype=np.float32
+                axis=np.array([0, 0, -1]), theta=settings.armAngle, dtype=np.float32
             )
         )
 
