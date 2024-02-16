@@ -46,11 +46,8 @@ class Scene:
         self.up = np.cross(self.right, self.forwards)
 
     def update(self, rate):
-        # TODO: update arm and finger rotations/positions
-
-        overlap = self.arm1.limbs[3].overlapsWith(self.keyboard.keys)
+        overlap = self.arm1.overlapsWith(self.keyboard.keys)
         self.keyboard.updatePressed(set(overlap))
-
         self.keyboard.update(rate)
         self.arm1.update()
         pass

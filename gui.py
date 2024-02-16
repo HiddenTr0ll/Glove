@@ -1,6 +1,7 @@
 from settings import *
 import settings
 import os
+import math
 
 
 class GUI():
@@ -139,6 +140,48 @@ class GUI():
                             else:
                                 settings.recorder.stopMovementRecording()
                                 self.saveDialog("Movement")
+
+                with imgui.begin_menu("Arm", True) as settings_menu:
+                    if settings_menu.opened:
+                        imgui.text("Arm Position")
+                        changed0, value0 = imgui.slider_float("X",
+                                                              settings.armPos[0],
+                                                              min_value=-25,
+                                                              max_value=60,
+                                                              format="%.1f")
+                        changed1, value1 = imgui.slider_float("Y",
+                                                              settings.armPos[1],
+                                                              min_value=-30,
+                                                              max_value=2,
+                                                              format="%.1f")
+                        changed2, value2 = imgui.slider_float("Z",
+                                                              settings.armPos[2],
+                                                              min_value=-10,
+                                                              max_value=10,
+                                                              format="%.1f")
+                        if changed0:
+                            settings.armPos[0] = value0
+                        if changed1:
+                            settings.armPos[1] = value1
+                        if changed2:
+                            settings.armPos[2] = value2
+
+                        changed, radian = imgui.slider_angle("Angle",
+                                                             settings.armAngle,
+                                                             value_degrees_min=-180.0,
+                                                             value_degrees_max=180.0,
+                                                             format="%.1f")
+                        if changed:
+                            settings.armAngle = radian
+
+                        changed, value = imgui.drag_float("Fine Adjust Angle",
+                                                          math.degrees(settings.armAngle),
+                                                          change_speed=0.01,
+                                                          min_value=-180,
+                                                          max_value=180,
+                                                          format="%.2f")
+                        if changed:
+                            settings.armAngle = math.radians(value)
 
                 with imgui.begin_menu("Settings", True) as settings_menu:
                     if settings_menu.opened:

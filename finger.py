@@ -139,12 +139,53 @@ class Finger():
         self.phalanges[1].calculateTip()
         self.phalanges[2].position = self.phalanges[1].tipPosition
         self.phalanges[2].calculateTip()
-        self.tipPosition = self.phalanges[2].tipPosition
+        self.tipPosition = self.phalanges[2].tipPosition + settings.armPos
 
     def overlapsWith(self, cubeList: list[Cuboid]):
         overlapping = []
 
         for index, cube in enumerate(cubeList):
+            # x
+            if (self.tipPosition[0]+self.phalanges[2].l/2) < (cube.position[0]-cube.l/2):
+                continue
+
+            if (self.tipPosition[0]-self.phalanges[2].l/2) > (cube.position[0]+cube.l/2):
+                continue
+
+            # y
+            if (self.tipPosition[1]) < (cube.position[1]-cube.h):
+                continue
+
+            if (self.tipPosition[1]-2) > (cube.position[1]):
+                continue
+
+            # z
+            if (self.tipPosition[2]-self.phalanges[2].w/2) > (cube.position[2]+cube.w/2):
+                continue
+
+            if (self.tipPosition[2]+self.phalanges[2].w/2) < (cube.position[2]+cube.w/2):
+                continue
+
+            overlapping.append(index)
+        return overlapping
+
+    def overlapsWithSphere(self, cubeList: list[Cuboid]):
+        overlapping = []
+
+        for index, cube in enumerate(cubeList):
+            # get box closest point to sphere center by clamping
+            #         boxMin       tip      boxMax
+            # x = max(box.minX, min(self.tipPosition[0], box.maxX));
+            # y = max(box.minY, min(self.tipPosition[1], box.maxY));
+            # z = max(box.minZ, min(self.tipPosition[2], box.maxZ));
+
+            # this is the same as isPointInsideSphere
+            # distance = sqrt(
+            #    (x - self.tipPosition[0]) ** 2 +
+            #    (y - self.tipPosition[0]) ** 2 +
+            #    (z - self.tipPosition[0]) ** 2,
+            # );
+
             # x
             if (self.tipPosition[0]+self.phalanges[2].l/2) < (cube.position[0]-cube.l/2):
                 continue

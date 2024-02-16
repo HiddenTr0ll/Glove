@@ -47,14 +47,20 @@ def init():
     global movementSpeedV
     movementSpeedV = 1
 
+    global armPos
+    armPos = np.array([15, -40, 0], dtype=np.float32)
+
+    global armAngle
+    armAngle = .0
+
     global camPos
-    camPos = np.array([20, -10, 45], dtype=np.float32)
+    camPos = np.array([90, -50, 50], dtype=np.float32)
 
     global camTheta
-    camTheta = 150
+    camTheta = 160
 
     global camPhi
-    camPhi = -20
+    camPhi = -30
 
     global testRotation
     testRotation = 0

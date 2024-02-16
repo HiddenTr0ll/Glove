@@ -26,7 +26,7 @@ class Keyboard():
             self.initAudio()
 
         #                         x, y, z
-        self.position = np.array([-10, 55, 0], dtype=np.float32)
+        self.position = np.array([0, 0, 0], dtype=np.float32)
         self.keys: list[Key] = []
         self.keyPressed = set()
 

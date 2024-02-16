@@ -9,6 +9,8 @@ from finger import *
 
 class Arm():
     def __init__(self):
+        self.position = np.array([0, 0, 0], dtype=np.float32)
+        self.angle = 0
         self.measurements = (
             # l, w, h,
             6.0, 5.0, 27.5,               # loweArm   0
@@ -46,6 +48,7 @@ class Arm():
         # all: OR combination of all truth values
         # if all([np.allclose(x, y, atol=0.0001) for x, y in zip(self.rotationList, settings.rotationList)]):
         self.rotationList = settings.rotationList
+        self.position = settings.armPos
         self.updateRotations()
         self.updatePositions()
 
@@ -56,6 +59,7 @@ class Arm():
             self.limbs[i].updateRotation(self.rotationList[i], self.limbs[6].rotation)
 
     def updatePositions(self):
+        # self.limbs[0].updatePosition(self.position)
         self.limbs[0].calculateTip()
         self.limbs[6].updatePosition(self.limbs[0].tipPosition)
         self.limbs[6].calculateTip()
@@ -66,6 +70,12 @@ class Arm():
                 self.offsets[i-1],
                 self.offsets[i+4])
             # tip position gets calculatet automatically
+
+    def overlapsWith(self, keys):
+        overlap = []
+        for index in range(1, 6):
+            overlap += self.limbs[index].overlapsWith(keys)
+        return overlap
 
     def draw(self):
         settings.texture.use()
