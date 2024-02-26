@@ -41,6 +41,8 @@ class GloveGL:
 
     def run(self):
         while not glfw.window_should_close(settings.window) and settings.running:
+            glfw.poll_events()
+
             if not self.gui.saveDialogEnabled:
                 self.handleKeys()               # handle key inputs
             self.handleEvents()             # check if events should be triggered by key inputs
@@ -49,20 +51,17 @@ class GloveGL:
 
             settings.recorder.emulateMovement(False)
 
-            glfw.poll_events()
+            # 1 frame every 16.7ms -> 60fps
+            self.mainScene.update(self.frameTime/16.7)
+
+            self.gui.generate()
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-            self.gui.render()
-
-            # 1 frame every 16.7ms -> 60fps
-            self.mainScene.update(self.frameTime/16.7)
             self.mainScene.render()
-
             settings.impl.render(imgui.get_draw_data())
-
-            self.calculateFramerate()
             glFlush()
+            self.calculateFramerate()
 
     def handleKeys(self):
         combo = 0

@@ -406,7 +406,7 @@ class GUI():
             self.saveMode = mode
             self.fileName = "New"+mode+"File"
 
-    def render(self):
+    def generate(self):
         settings.impl.process_inputs()
         imgui.new_frame()
 
