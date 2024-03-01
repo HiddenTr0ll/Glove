@@ -10,7 +10,7 @@ import math
 class Finger():
     def __init__(self, l, w, h, fingerIndex):
         self.fingerIndex = fingerIndex
-        #  base   middle   tip
+        #           base   middle   tip
         ratios = (0.4285, 0.2894, 0.2821,  # thumb
                   0.4123, 0.3097, 0.2780,  # index
                   0.4057, 0.3311, 0.2632,  # middle
@@ -139,7 +139,7 @@ class Finger():
         self.phalanges[1].position = self.phalanges[0].tipPosition
         self.phalanges[1].calculateTip()
         self.phalanges[2].position = self.phalanges[1].tipPosition
-        self.phalanges[2].calculateTip()
+        self.phalanges[2].calculateFingerTip()
         # calculate absolute tip with offset from origin and rotation
         x = self.phalanges[2].tipPosition[0]
         y = self.phalanges[2].tipPosition[1]
@@ -184,39 +184,18 @@ class Finger():
         for index, cube in enumerate(cubeList):
             # get box closest point to sphere center by clamping
             #         boxMin       tip      boxMax
-            # x = max(box.minX, min(self.tipPosition[0], box.maxX));
-            # y = max(box.minY, min(self.tipPosition[1], box.maxY));
-            # z = max(box.minZ, min(self.tipPosition[2], box.maxZ));
+            x = max(cube.position[0]-cube.l/2, min(self.tipPosition[0], cube.position[0]+cube.l/2))
+            y = max(cube.position[1]-cube.h, min(self.tipPosition[1], cube.position[1]))
+            z = max(cube.position[2]-cube.w/2, min(self.tipPosition[2], cube.position[2]+cube.w/2))
 
             # this is the same as isPointInsideSphere
-            # distance = sqrt(
-            #    (x - self.tipPosition[0]) ** 2 +
-            #    (y - self.tipPosition[0]) ** 2 +
-            #    (z - self.tipPosition[0]) ** 2,
-            # );
-
-            # x
-            if (self.tipPosition[0]+self.phalanges[2].l/2) < (cube.position[0]-cube.l/2):
-                continue
-
-            if (self.tipPosition[0]-self.phalanges[2].l/2) > (cube.position[0]+cube.l/2):
-                continue
-
-            # y
-            if (self.tipPosition[1]) < (cube.position[1]-cube.h):
-                continue
-
-            if (self.tipPosition[1]-2) > (cube.position[1]):
-                continue
-
-            # z
-            if (self.tipPosition[2]-self.phalanges[2].w/2) > (cube.position[2]+cube.w/2):
-                continue
-
-            if (self.tipPosition[2]+self.phalanges[2].w/2) < (cube.position[2]+cube.w/2):
-                continue
-
-            overlapping.append(index)
+            distance = math.sqrt(
+                (x - self.tipPosition[0]) ** 2 +
+                (y - self.tipPosition[1]) ** 2 +
+                (z - self.tipPosition[2]) ** 2,
+            )
+            if distance < ((self.phalanges[2].w + self.phalanges[2].l)/4):
+                overlapping.append(index)
         return overlapping
 
     def draw(self):

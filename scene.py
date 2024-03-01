@@ -46,10 +46,10 @@ class Scene:
         self.up = np.cross(self.right, self.forwards)
 
     def update(self, rate):
+        self.arm1.update()
         overlap = self.arm1.overlapsWith(self.keyboard.keys)
         self.keyboard.updatePressed(set(overlap))
         self.keyboard.update(rate)
-        self.arm1.update()
         pass
 
     def render(self):

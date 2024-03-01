@@ -151,7 +151,7 @@ class GUI():
                                                               format="%.1f")
                         changed1, value1 = imgui.slider_float("Y",
                                                               settings.armPos[1],
-                                                              min_value=-30,
+                                                              min_value=-70,
                                                               max_value=2,
                                                               format="%.1f")
                         changed2, value2 = imgui.slider_float("Z",

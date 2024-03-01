@@ -18,9 +18,9 @@ class Limb(Cuboid):
         delta = np.dot(np.array([0, 0, self.h, 0], dtype=np.float32), self.rotation)
         self.tipPosition = self.position + delta[:3]
 
-    def updatePositionWithOffset(self, palmTip, palmRotation, offsetX, offsetZ):
-        delta = np.dot(np.array([offsetX, 0, offsetZ], dtype=np.float32), palmRotation[:3, :3])
-        self.position = palmTip + delta
+    def calculateFingerTip(self):
+        delta = np.dot(np.array([0, 0, self.h - (self.l+self.b)/2, 0], dtype=np.float32), self.rotation)
+        self.tipPosition = self.position + delta[:3]
 
     def get_hand_model_transform(self):
         model_transform = pyrr.matrix44.create_identity(dtype=np.float32)

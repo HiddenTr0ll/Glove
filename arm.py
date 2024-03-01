@@ -59,7 +59,6 @@ class Arm():
             self.limbs[i].updateRotation(self.rotationList[i], self.limbs[6].rotation)
 
     def updatePositions(self):
-        # self.limbs[0].updatePosition(self.position)
         self.limbs[0].calculateTip()
         self.limbs[6].updatePosition(self.limbs[0].tipPosition)
         self.limbs[6].calculateTip()
@@ -74,7 +73,7 @@ class Arm():
     def overlapsWith(self, keys):
         overlap = []
         for index in range(1, 6):
-            overlap += self.limbs[index].overlapsWith(keys)
+            overlap += self.limbs[index].overlapsWithSphere(keys)
         return overlap
 
     def draw(self):
