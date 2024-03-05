@@ -29,12 +29,16 @@ class Key(Cuboid):
         if self.isPressed:
             if self.eulers[0] > 85:
                 self.eulers[0] -= 0.5 * rate
+                if self.eulers[0] < 85:
+                    self.eulers[0] = 85
                 self.updateRotation(pyrr.matrix44.create_from_eulers(
                     eulers=np.radians(self.eulers),
                     dtype=np.float32))
 
         elif self.eulers[0] < 90:
             self.eulers[0] += 0.5 * rate
+            if self.eulers[0] > 90:
+                self.eulers[0] = 90
             self.updateRotation(pyrr.matrix44.create_from_eulers(
                 eulers=np.radians(self.eulers),
                 dtype=np.float32))

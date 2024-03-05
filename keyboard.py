@@ -28,7 +28,7 @@ class Keyboard():
         #                         x, y, z
         self.position = np.array([0, 0, 0], dtype=np.float32)
         self.keys: list[Key] = []
-        self.keyPressed = set()
+        self.lastKeysPressed = set()
 
         for i in range(OCTAVES):
             position = 0
@@ -70,11 +70,11 @@ class Keyboard():
                 key.get_model_transform())
             glDrawArrays(GL_TRIANGLES, 0, key.vertexCount)
 
-    def updatePressed(self, pressed):
+    def updatePressed(self, currentlyPressed):
         # set(new) ^ set(old) XOR?
-        toRelease = self.keyPressed - pressed
-        toPress = pressed - self.keyPressed
-        self.keyPressed = pressed
+        toRelease = self.lastKeysPressed - currentlyPressed
+        toPress = currentlyPressed - self.lastKeysPressed
+        self.lastKeysPressed = currentlyPressed
         settings.recorder.recordKeys(toPress, toRelease)
         keyIndex: int
         for keyIndex in toPress:
