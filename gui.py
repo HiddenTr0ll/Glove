@@ -62,16 +62,16 @@ class GUI():
 
         if self.saveDialogEnabled:
             imgui.open_popup("Save recorded "+self.saveMode+"s to file?")
-            imgui.set_next_window_size(300, 100)
+            imgui.set_next_window_size(330, 100)
             with imgui.begin_popup_modal("Save recorded "+self.saveMode+"s to file?", flags=imgui.WINDOW_NO_RESIZE) as popup:
                 if popup.opened:
                     imgui.text('Save as:')
                     imgui.same_line(spacing=10)
                     changed, self.fileName = imgui.input_text('',  self.fileName, flags=imgui.INPUT_TEXT_AUTO_SELECT_ALL)
 
-                    clicked_yes = imgui.button('Yes', width=50)
+                    clicked_yes = imgui.button('Save', width=70)
                     imgui.same_line(spacing=10)
-                    clicked_no = imgui.button('No', width=50)
+                    clicked_no = imgui.button('Cancel', width=70)
 
                     if clicked_yes:
                         if self.saveMode == "Key":

@@ -7,7 +7,7 @@ from itertools import islice
 from sortedcontainers import SortedDict
 import pyrr
 
-dataCount = 1000000
+maxDataCount = 1000000
 
 
 class Recorder():
@@ -66,7 +66,7 @@ class Recorder():
     def startMovementRecording(self):
         if not self.recordingMovement:
             self.movementCount = 0
-            self.movementData = np.zeros((dataCount, 9))
+            self.movementData = np.zeros((maxDataCount, 9))
             self.recordingMovement = True
 
     def stopMovementRecording(self):
