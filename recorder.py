@@ -159,14 +159,14 @@ class Recorder():
             if max(self.playbackDict) < currentTick:
                 self.playbackPaused = True
 
-            closestTick = closestKey(self.playbackDict, currentTick)
-            for index in self.playbackDict[closestTick]:
+            tick = closestTick(self.playbackDict, currentTick)
+            for index in self.playbackDict[tick]:
                 settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
 
-            if closestTick > 0:  # if there is a previous tick
-                neighbourTick = previousKey(self.playbackDict, closestTick)
+            if tick > 0:  # if there is a previous tick
+                neighbourTick = previousTick(self.playbackDict, tick)
             else:
-                neighbourTick = nextKey(self.playbackDict, closestTick)
+                neighbourTick = nextTick(self.playbackDict, tick)
             for index in self.playbackDict[neighbourTick]:
                 settings.rotationList[int(self.playbackData[index][0])] = pyrr.matrix44.create_from_quaternion(self.playbackData[index][1:])
 
@@ -176,17 +176,17 @@ class Recorder():
             self.lastMovement = currentTime
 
 
-def closestKey(sorted_dict, target):
+def closestTick(sorted_dict, target):
     # only element 0 of part of dict from min -> end
-    keys = list(islice(sorted_dict.irange(minimum=target), 1))
-    keys.extend(islice(sorted_dict.irange(maximum=target, reverse=True), 1))
+    ticks = list(islice(sorted_dict.irange(minimum=target), 1))
+    ticks.extend(islice(sorted_dict.irange(maximum=target, reverse=True), 1))
     # key(k)=abs(target - k) -> select value with the minimum difference to target
-    return min(keys, key=lambda k: abs(target - k))
+    return min(ticks, key=lambda k: abs(target - k))
 
 
-def previousKey(sorted_dict, target):
+def previousTick(sorted_dict, target):
     return list(islice(sorted_dict.irange(maximum=target, reverse=True), 2))[1]
 
 
-def nextKey(sorted_dict, target):
+def nextTick(sorted_dict, target):
     return list(islice(sorted_dict.irange(minimum=target), 2))[1]
