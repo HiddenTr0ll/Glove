@@ -194,7 +194,11 @@ class Finger():
                 (y - self.tipPosition[1]) ** 2 +
                 (z - self.tipPosition[2]) ** 2,
             )
-            if distance < ((self.phalanges[2].w + self.phalanges[2].l)/4):
+            if settings.customTipRadius:
+                radius = settings.tipRadius
+            else:
+                radius = (self.phalanges[2].w + self.phalanges[2].l)/4
+            if distance < radius:
                 overlapping.append(index)
         return overlapping
 
