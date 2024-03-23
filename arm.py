@@ -13,13 +13,13 @@ class Arm():
         self.angle = 0
         self.measurements = (
             # l, w, h,
-            6.0, 5.0, 27.5,               # loweArm   0
+            6.0, 5.0, 26,               # loweArm   0
             2.0, 1.7, 11.5,               # thumb     1
             1.7, 1.5, 9.5,                # index     2
             1.7, 1.6, 11.0,               # middle    3
             1.6, 1.5, 10.5,               # ring      4
             1.5, 1.3, 8.0,                # pinky     5
-            8.5, 3.0, 8.5                 # palm      6
+            6.5, 3.0, 8.5                 # palm      6
         )
         self.offsets = (
             -4.0, -2.8, -0.5, 1.4, 3.1,   # x-offset fingers
