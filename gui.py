@@ -13,8 +13,7 @@ class GUI():
         self.settings = {
             "debug": False,
             "saveDialog": False,
-            "audioOn": False
-        }
+            "audioOn": False}
 
         self.active = {
             "window": False,
@@ -224,6 +223,26 @@ class GUI():
                                                              format="%.1f")
                         if changed:
                             settings.testRotation2 = values
+
+                        clickedReset, _ = imgui.menu_item("ResetCamera")
+                        if clickedReset:
+                            settings.camPos = np.array([-5.17, 18.53, 41.3], dtype=np.float32)
+                            settings.camTheta = 320.984017
+                            settings.camPhi = -44.240169
+
+                        clicked, enabled = imgui.checkbox("Custom Tip Radius", settings.customTipRadius)
+                        if enabled:
+                            settings.customTipRadius = True
+                        else:
+                            settings.customTipRadius = False
+
+                        changed, values = imgui.slider_float("Tip Radius",
+                                                             settings.tipRadius,
+                                                             min_value=0,
+                                                             max_value=3,
+                                                             format="%.1f")
+                        if changed:
+                            settings.tipRadius = values
 
         if self.settings["debug"]:
 
