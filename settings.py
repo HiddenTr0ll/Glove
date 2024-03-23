@@ -22,6 +22,7 @@ import serial
 from read_glove import gloveLoop
 
 import pyrr
+import math
 
 import imgui
 from imgui.integrations.glfw import GlfwRenderer
@@ -48,19 +49,25 @@ def init():
     movementSpeedV = 1
 
     global armPos
-    armPos = np.array([15, -40, 0], dtype=np.float32)
+    armPos = np.array([20.4, -53, -1.3], dtype=np.float32)
 
     global armAngle
-    armAngle = .0
+    armAngle = math.radians(115.41)
 
     global camPos
-    camPos = np.array([90, -50, 50], dtype=np.float32)
+    camPos = np.array([-5.17, 18.53, 41.3], dtype=np.float32)
 
     global camTheta
-    camTheta = 160
+    camTheta = 320.984017
 
     global camPhi
-    camPhi = -30
+    camPhi = -44.240169
+
+    global customTipRadius
+    customTipRadius = False
+
+    global tipRadius
+    tipRadius = 0.1
 
     global testRotation
     testRotation = 0
