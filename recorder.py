@@ -1,6 +1,6 @@
 import settings
 from settings import *
-from mido import Message, MetaMessage, MidiFile, MidiTrack
+from mido import Message, MetaMessage, MidiFile, MidiTrack, second2tick, bpm2tempo
 from os import listdir
 import csv
 from itertools import islice
@@ -36,6 +36,11 @@ class Recorder():
             self.keyRecordingFile = MidiFile()
             self.keyRecordingTrack = MidiTrack()
             self.keyRecordingFile.tracks.append(self.keyRecordingTrack)
+            self.ticks_per_beat = self.keyRecordingFile.ticks_per_beat  # default: 480
+            bpm = 120  # default midi tempo
+            self.tempo = bpm2tempo(bpm)
+            self.keyRecordingTrack.append(MetaMessage('set_tempo', tempo=self.tempo))
+            self.keyRecordingTrack.append(MetaMessage('time_signature', numerator=4, denominator=4))
             self.keyRecordingTrack.append(Message('program_change', program=12, time=0))
             self.lastTick = glfw.get_time()
             self.keyCount = 0
@@ -43,12 +48,14 @@ class Recorder():
 
     def recordKeys(self, toPress, toRelease):
         if self.recordingKeys:
-            delta = int(1000*(glfw.get_time() - self.lastTick))
+            delta = second2tick(glfw.get_time() - self.lastTick, self.ticks_per_beat, self.tempo)
             keyIndex: int
             for keyIndex in toPress:
                 self.keyRecordingTrack.append(Message("note_on", note=48+keyIndex, velocity=64, time=delta))
+                delta = 0
             for keyIndex in toRelease:
                 self.keyRecordingTrack.append(Message("note_off", note=48+keyIndex, velocity=64, time=delta))
+                delta = 0
             keysPressed = len(toPress) + len(toRelease)
             if keysPressed > 0:
                 self.lastTick = glfw.get_time()
